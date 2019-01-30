@@ -20,7 +20,7 @@ def create_defect_by_stacking(defect_depth_position, sidelength, final_depth, de
     prismatic_equivalent_depth_position = final_depth - 1 - defect_depth_position
 
     name = 'ZnO_xy'+str(sidelength)+'_z'+str(final_depth)+'_d'+str(prismatic_equivalent_depth_position) + '_rev'
-    model_path = Path(__file__).parent / 'DFT Cells'
+    model_path = str(Path(__file__).parent / 'DFT Cells')
     bulk_filename = "ZnO_Unitcell_Orth_3x2x2.cif"
     bulk_path = os.path.join(model_path, bulk_filename)
     bulk = io.read(bulk_path)
