@@ -22,7 +22,7 @@ def prismatic(file, limits, PRISM=True, savepath=None, thermal_effects=True, fir
         output = os.path.join(savepath, name + '_FP{:03d}{}.mrc'.format(FP_number, no_thermal_label))
 
         probestep = 0.15 # Å
-        potential_spacing = 0.05 # Å
+        potential_spacing = 0.025 # Å
         include_thermal_effects = thermal_effects
         alpha=20.0e-3
         focus=0
