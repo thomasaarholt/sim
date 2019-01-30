@@ -96,8 +96,7 @@ def create_defect_by_stacking(defect_depth_position, sidelength, final_depth, de
     model.cell[2,2] = final_depth*layer_thickness
     
     outside_cell = [atom.index for atom in model if (atom.position < [0,0,0]).any() or (atom.position >= model.cell.diagonal()).any() or (atom.position[2] + 0.0001 >= model.cell[2,2]).any()]
-    if np.any(outside_cell):
-        print('deleting things')
+    # we delete atoms - but this should only be in the z direction
     del model[outside_cell]
 
     model.info['name'] = name
@@ -159,7 +158,7 @@ def create_and_save_model_by_stacking(
     model_path = str(Path(main_path) / model_folder_name / 'Models')
     save_cell(cell, cell.info['name'], model_path, only_save, temperature)
 
-    Path(f"./{model_folder_name}").mkdir(exist_ok=True)
+    Path("./{}".format(model_folder_name)).mkdir(exist_ok=True)
     return cell
 
 def rotate90(cell, axis1=0, axis2=2):
