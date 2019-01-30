@@ -270,7 +270,7 @@ def save_cell_for_prismatic(sample, name, path="", temperature='RT'):
 
     header = "Test cell" + "\n\t" + positions
     footer ="-1"
-    fmt = ['%d', '%0.6f', '%0.6f', '%0.6f', '%0.1f', '%0.3f']
+    fmt = ['%d', '%0.9f', '%0.9f', '%0.9f', '%0.1f', '%0.3f']
     np.savetxt(os.path.join(path, name + ".xyz"), total, fmt=fmt, header=header, footer=footer, comments="",)# encoding='utf-8')
     
     
