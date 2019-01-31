@@ -25,8 +25,8 @@ def stack_and_save():
     def save(files, name):
         def read(filenames):
             data = []
-            for name in filenames:
-                data.append(readMRC(name))
+            for filename in filenames:
+                data.append(readMRC(filename))
             return np.asarray(data)
         s = hs.signals.Signal2D(read(files)).as_signal2D((0,3))
         s.metadata.add_node('Simulation')
@@ -54,7 +54,7 @@ def stack_and_save():
         fig, ax = plt.subplots(dpi=200)
         im = ax.imshow(s.inav[40.:].sum().data)
 
-        def save(filepath, fig=None):
+        def saveimg(filepath, fig=None):
             '''Save the current image with no whitespace
             Example filepath: "myfig.png" or r"C:\myfig.pdf" 
             Based on answers from https://stackoverflow.com/questions/11837979/
@@ -74,7 +74,7 @@ def stack_and_save():
 
 
         s.save("hyperspy/" + name, overwrite=True)
-        save("hyperspy/" + name + "_HAADF_sum.png")
+        saveimg("hyperspy/" + name + "_HAADF_sum.png")
 
 
 
