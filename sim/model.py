@@ -1,5 +1,29 @@
 import numpy as np
 from ase.visualize import view
+from sim.cp import copy_file
+def create(**kwargs):
+    final_depth = kwargs['final_depth']
+    sidelength = kwargs['sidelength']
+
+    model_folder_name = "{}_{}".format(kwargs['defect_type'].capitalize(),kwargs['temperature'])
+    if comment:
+        model_folder_name += "_" + comment
+    defect_range = final_depth - 1 - np.array(single_index)  if single_index else range(4,final_depth - 2)
+
+    kwargs['model_folder_name'] = model_folder_name
+    cells = [
+        create_and_save_model_by_stacking(
+            defect_depth_position=defect_position, **kwargs,
+    ) for defect_position in defect_range]
+
+    XMin = (1-central_fraction/sidelength)/2
+    XMax = (1-(1-central_fraction/sidelength)/2)
+    YMin = (1-central_fraction/sidelength)/2
+    YMax = (1-(1-central_fraction/sidelength)/2)
+    print((XMin, XMax))
+
+    target_folder = kwargs['main_path'] / model_folder_name
+    copy_file(target_folder)
 
 def create_defect_by_stacking(defect_depth_position, sidelength, final_depth, defect_type = 'relaxed', final_sidelength=None):
     '''Create defect at a certain layer position, 
