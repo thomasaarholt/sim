@@ -81,10 +81,12 @@ def stack_and_save():
     for model in model_files:
         load_files = sorted(["prism/" + f for f in files if f.startswith(model) and "thermal" not in f and f.endswith('.mrc')])
         if load_files:
-            print('Stacking {}'.format(model))
-            save(load_files, model)
+            name = load_files[0].split("_FP")[0]
+            print('Stacking {}'.format(name))
+            save(load_files, name)
 
         load_files = sorted(["prism/" + f for f in files if f.startswith(model) and "thermal" in f and f.endswith('.mrc')])
         if load_files:
-            print('Stacking {}'.format(model))
-            save(load_files, model + "_thermal")
+            name = load_files[0].split("_FP")[0]
+            print('Stacking {}'.format(name))
+            save(load_files, name + "_thermal")
