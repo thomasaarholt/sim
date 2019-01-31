@@ -54,6 +54,7 @@ def stack_and_save():
         fig, ax = plt.subplots(dpi=200)
         im = ax.imshow(s.inav[40.:].sum().data)
 
+        
         def saveimg(filepath, fig=None):
             '''Save the current image with no whitespace
             Example filepath: "myfig.png" or r"C:\myfig.pdf" 
