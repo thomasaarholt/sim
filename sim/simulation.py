@@ -1,4 +1,4 @@
-def prismatic(file, limits, PRISM=True, savepath=None, thermal_effects=True, firstFP=0, total_FP=50, probestep=0.15, sliceThickness=1.6218179):
+def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects=True, firstFP=0, total_FP=50, probestep=0.15, sliceThickness=1.6218179):
     import os
     import pyprismatic as pr
     from IPython.display import display
@@ -19,7 +19,7 @@ def prismatic(file, limits, PRISM=True, savepath=None, thermal_effects=True, fir
     YMin, YMax = limits
 
     for FP_number in range(firstFP,total_FP):
-        output = os.path.join(savepath, name + '_FP{:03d}{}.mrc'.format(FP_number, no_thermal_label))
+        output = os.path.join(savepath, name + label + '_FP{:03d}{}.mrc'.format(FP_number, no_thermal_label))
 
         probestep = 0.15 # Å
         potential_spacing = 0.05 # Å
