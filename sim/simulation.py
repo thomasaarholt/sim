@@ -1,4 +1,4 @@
-def prismatic(file, limits, PRISM=True, savepath=None, thermal_effects=True, firstFP=0, total_FP=50):
+def prismatic(file, limits, PRISM=True, savepath=None, thermal_effects=True, firstFP=0, total_FP=50, probestep=0.15, sliceThickness=1.6218179):
     import os
     import pyprismatic as pr
     from IPython.display import display
@@ -22,7 +22,7 @@ def prismatic(file, limits, PRISM=True, savepath=None, thermal_effects=True, fir
         output = os.path.join(savepath, name + '_FP{:03d}{}.mrc'.format(FP_number, no_thermal_label))
 
         probestep = 0.15 # Å
-        potential_spacing = 0.025 # Å
+        potential_spacing = 0.05 # Å
         include_thermal_effects = thermal_effects
         alpha=20.0e-3
         focus=0
@@ -42,7 +42,7 @@ def prismatic(file, limits, PRISM=True, savepath=None, thermal_effects=True, fir
             realspacePixelSizeX = potential_spacing,
             realspacePixelSizeY = potential_spacing,
             detectorAngleStep = 0.001,
-            sliceThickness = 1.6218179,
+            sliceThickness = sliceThickness,
             scanWindowXMin = XMin,
             scanWindowXMax = XMax,
             scanWindowYMin = YMin, 
