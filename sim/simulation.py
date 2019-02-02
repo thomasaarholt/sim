@@ -18,6 +18,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects
     XMin, XMax = limits
     YMin, YMax = limits
 
+    list_of_random_numbers = []
     for FP_number in range(firstFP,total_FP):
         output = os.path.join(savepath, name + label + '_FP{:03d}{}.mrc'.format(FP_number, no_thermal_label))
 
@@ -26,6 +27,9 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects
         include_thermal_effects = thermal_effects
         alpha=20.0e-3
         focus=0
+
+        random_number = random.randint(0,10000)
+        list_of_random_numbers.append()
 
         meta = pr.Metadata(
             filenameAtoms=file, 
@@ -56,7 +60,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects
             tileY=1,
             tileZ=1,
             transferMode='singlexfer',
-            randomSeed=random.randint(0,10000),
+            randomSeed=random_number,
             numStreamsPerGPU=3,
             batchSizeTargetGPU=1,
         )
@@ -66,3 +70,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects
         meta.go()
         t2 = time()
         display('It took {:.2f} minutes, or {:.2f} hours'.format((t2 - t1)/60, (t2 - t1)/3600))
+
+        random_filename = os.path.join(savepath, name + label + '_random.txt')
+        with open(random_filename, 'a') as f:
+            f.write("\n".join(list_of_random_numbers))

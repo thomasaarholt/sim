@@ -17,7 +17,6 @@ def stack_and_save(simulation_folder='prism'):
     groups = [sorted(glob.glob('{}/{}*'.format(simulation_folder, f))) for f in names]
 
     def save(files, name):
-        print(files)
         if files[0].endswith('.mrc'):
             def read(filenames):
                 data = []
