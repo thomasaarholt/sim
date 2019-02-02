@@ -19,7 +19,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects
     YMin, YMax = limits
 
     for FP_number in range(firstFP,total_FP):
-        output = os.path.join(savepath, name + label + '_FP{:03d}{}.mrc'.format(FP_number, no_thermal_label))
+        output = os.path.join(savepath, name + label + no_thermal_label + '_FP{:03d}.mrc'.format(FP_number))
 
         probestep = 0.15 # Å
         potential_spacing = 0.05 # Å
