@@ -51,7 +51,7 @@ def stack_and_save(simulation_folder='prism'):
         elif simulation_folder == 'multem':
             s = hs.load(files, stack=True).swap_axes(-1,-2)
             haadf = s.inav[1].sum() #multem
-            haadf = np.flip(haadf.data, axis=-1)
+            haadf.data = np.flip(haadf.data, axis=-1)
         print('Begun saving!')
 
         fig, ax = plt.subplots(dpi=200)
