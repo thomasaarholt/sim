@@ -71,6 +71,6 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects
         t2 = time()
         display('It took {:.2f} minutes, or {:.2f} hours'.format((t2 - t1)/60, (t2 - t1)/3600))
 
-        random_filename = os.path.join(savepath, name + label + '_random.txt')
-        with open(random_filename, 'a') as f:
-            f.write("\n".join(list_of_random_numbers))
+    random_filename = os.path.join(savepath, name + label + '_random.txt')
+    with open(random_filename, 'a') as f:
+        f.write("\n".join(list_of_random_numbers))
