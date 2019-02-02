@@ -54,16 +54,6 @@ def stack_and_save(simulation_folder='prism'):
             haadf = s.inav[1].sum() #multem
             haadf.data = np.flip(haadf.data, axis=-1)
         print('Begun saving!')
-
-        fig, ax = plt.subplots(dpi=200)
-        im = ax.imshow(haadf.data)
-        print(haadf)
-        print(int(0.75/haadf.axes_manager[-1].scale))
-        print(haadf.axes_manager[-1].scale)
-
-        fig2, ax = plt.subplots(dpi=200)
-        im2 = ax.imshow(integrate(haadf).data)
-
         def saveimg(filepath, fig=None):
             '''Save the current image with no whitespace
             Example filepath: "myfig.png" or r"C:\myfig.pdf" 
@@ -82,7 +72,14 @@ def stack_and_save(simulation_folder='prism'):
             fig.savefig(filepath, pad_inches=0, bbox_inches='tight')
 
         s.save("hyperspy/" + name + ".hspy", overwrite=True)
+
+
+        fig, ax = plt.subplots(dpi=200)
+        im = ax.imshow(haadf.data)
         saveimg("hyperspy/" + name + "_HAADF_sum.png", fig=fig)
+
+        fig2, ax = plt.subplots(dpi=200)
+        im2 = ax.imshow(integrate(haadf).data)
         saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
 
     for files, name in zip(groups, names):
