@@ -14,7 +14,7 @@ def stack_and_save(simulation_folder='prism'):
         if f.suffix == '.hspy' or f.suffix == '.mrc'
     ])
 
-    groups = [sorted(glob.glob('multem/{}*'.format(f))) for f in names]
+    groups = [sorted(glob.glob('{}/{}*'.format(simulation_folder, f))) for f in names]
 
     def save(files, name):
         if files[0].endswith('.mrc'):
@@ -27,7 +27,7 @@ def stack_and_save(simulation_folder='prism'):
                 return np.asarray(data)
             s = hs.signals.Signal2D(read(files)).as_signal2D((0, 3))
             s.metadata.add_node('Simulation')
-            s.metadata.Simulation.Software = 'Prismatic'
+            s.metadata.Simulation.Software = simulation_folder
 
             s.axes_manager[0].name = 'Acceptance Angle'
             s.axes_manager[0].units = 'mrad'
@@ -48,9 +48,10 @@ def stack_and_save(simulation_folder='prism'):
             s.axes_manager[3].units = 'Å'
 
             haadf = s.inav[40.:].sum()
-        else:
+        elif simulation_folder == 'multem':
             s = hs.load(files, stack=True).swap_axes(-1,-2)
             haadf = s.inav[1].sum() #multem
+            haadf = np.flip(haadf.data, axis=-1)
         print('Begun saving!')
 
         fig, ax = plt.subplots(dpi=200)
