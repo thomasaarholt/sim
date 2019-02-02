@@ -1,7 +1,19 @@
 import numpy as np
 from ase.visualize import view
 from sim.cp import copy_file
-def create(**kwargs):
+from pathlib import Path
+import os
+
+def central_XY(central_fraction, sidelength):
+    XMin = (1-central_fraction/sidelength)/2
+    XMax = (1-(1-central_fraction/sidelength)/2)
+    return XMin, XMax
+
+def create(specs, **kwargs):
+    comment = specs['comment']
+    central_fraction = specs['central_fraction']
+    single_index = specs['single_index']
+
     final_depth = kwargs['final_depth']
     sidelength = kwargs['sidelength']
 
@@ -16,14 +28,104 @@ def create(**kwargs):
             defect_depth_position=defect_position, **kwargs,
     ) for defect_position in defect_range]
 
-    XMin = (1-central_fraction/sidelength)/2
-    XMax = (1-(1-central_fraction/sidelength)/2)
-    YMin = (1-central_fraction/sidelength)/2
-    YMax = (1-(1-central_fraction/sidelength)/2)
-    print((XMin, XMax))
+    print(central_XY(central_fraction, sidelength))
 
     target_folder = kwargs['main_path'] / model_folder_name
     copy_file(target_folder)
+
+def create_cube(sidelength=3, defect_type='relaxed', main_path="", temperature='RT', comment="", central_fraction=2.0):
+    from ase import io
+    from ase.build import stack
+    from pathlib import Path
+    import os
+
+    model_folder_name = "cube_{}_{}".format(defect_type.capitalize(),temperature)
+    if comment:
+        model_folder_name += "_" + comment
+    defect, bulk, name = load_defect_bulk(defect_type, name="")
+
+    dim1_defect = defect.copy()
+    dim1_bulk = bulk.copy()
+    for i in range(int((sidelength-1)/2)):
+        dim1_defect = stack(dim1_defect, bulk, axis=0)
+        dim1_defect = stack(bulk, dim1_defect, axis=0)
+        dim1_bulk = stack(dim1_bulk, bulk, axis=0)
+        dim1_bulk = stack(bulk, dim1_bulk, axis=0)
+
+    dim2_defect = dim1_defect.copy()
+    dim2_bulk = dim1_bulk.copy()
+
+    for i in range(int((sidelength-1)/2)):
+        dim2_defect = stack(dim2_defect, dim1_bulk, axis=1)
+        dim2_defect = stack(dim1_bulk, dim2_defect, axis=1)
+        dim2_bulk = stack(dim2_bulk, dim1_bulk, axis=1)
+        dim2_bulk = stack(dim1_bulk, dim2_bulk, axis=1)
+    
+    dim3_defect = dim2_defect.copy()
+
+    for i in range(int((sidelength-1)/2)):
+        dim3_defect = stack(dim3_defect, dim2_bulk, axis=2)
+        dim3_defect = stack(dim2_bulk, dim3_defect, axis=2)
+
+    model = dim3_defect
+    model.info['name'] = model_folder_name
+    if main_path == "":
+        raise ValueError('main_path must be the parent folder of where I am running the simulation from')
+    model_path = Path(main_path) / model_folder_name / 'Models'
+    model_path.mkdir(parents=True, exist_ok=True)
+    model_path = str(model_path)
+
+    XMin, XMax = central_XY(central_fraction, sidelength)
+
+    multem_cell = flip_for_MULTEM(model)
+    multem_cell.info['name'] += '_Multem'
+    target_folder = Path(main_path) / model_folder_name
+    
+    with open(str(Path(__file__).parent / 'run.py'), 'r') as myfile:
+        run_contents=myfile.read()
+    run_contents = run_contents.format(XMin, XMax)
+    with open(str(target_folder / 'run.py'), 'a') as the_file:
+        the_file.write(run_contents)
+    copy_file(target_folder)
+
+    save_cell(cell=model, name=model.info['name'], path=model_path, only_save='prismatic', temperature=temperature)
+    save_cell(cell=model, name=model.info['name'], path=model_path, only_save='xyz', temperature=temperature)
+    save_cell(cell=multem_cell, name=multem_cell.info['name'], path=model_path, only_save='multem', temperature=temperature)
+    save_cell(cell=multem_cell, name=multem_cell.info['name'], path=model_path, only_save='xyz', temperature=temperature)
+
+
+def flip_for_MULTEM(cell):
+    cell2 = cell.copy()
+    cell2.positions[:,2] = cell2.cell.diagonal()[2] - cell2.positions[:,2]
+    return cell2
+
+def load_defect_bulk(defect_type, name):
+    from ase.io import read
+    model_path = Path(__file__).parent / 'DFT Cells'
+    bulk_filename = "ZnO_Unitcell_Orth_3x2x2.cif"
+    bulk_path = model_path / bulk_filename
+    bulk = read(bulk_path)
+
+    # Set whether to use DFT in the variable above
+    if defect_type == 'relaxed':
+        defect_filename = "ZnO_Unitcell_Orth_3x2x2_InVZnO_Relaxed.cif"
+        name += '_DFT'
+    elif defect_type == 'bulk':
+        defect_filename = bulk_filename
+        name += '_bulkZnO'
+    elif defect_type == 'indium':
+        defect_filename = "ZnO_Unitcell_Orth_3x2x2_InVZnO_Static.cif" # we modify this later
+        name += '_indium'
+    else:
+        defect_filename = "ZnO_Unitcell_Orth_3x2x2_InVZnO_Static.cif"
+        name += '_noDFT'
+    defect = read(model_path / defect_filename)
+
+    bulk = rotate90(bulk)
+    defect = rotate90(defect)
+
+    return defect, bulk, name
+
 
 def create_defect_by_stacking(defect_depth_position, sidelength, final_depth, defect_type = 'relaxed', final_sidelength=None):
     '''Create defect at a certain layer position, 
@@ -44,28 +146,8 @@ def create_defect_by_stacking(defect_depth_position, sidelength, final_depth, de
     prismatic_equivalent_depth_position = final_depth - 1 - defect_depth_position
 
     name = 'ZnO_xy'+str(sidelength)+'_z'+str(final_depth)+'_d'+str(prismatic_equivalent_depth_position) + '_rev'
-    model_path = str(Path(__file__).parent / 'DFT Cells')
-    bulk_filename = "ZnO_Unitcell_Orth_3x2x2.cif"
-    bulk_path = os.path.join(model_path, bulk_filename)
-    bulk = io.read(bulk_path)
 
-    # Set whether to use DFT in the variable above
-    if defect_type == 'relaxed':
-        defect_filename = "ZnO_Unitcell_Orth_3x2x2_InVZnO_Relaxed.cif"
-        name += '_DFT'
-    elif defect_type == 'bulk':
-        defect_filename = bulk_filename
-        name += '_bulkZnO'
-    elif defect_type == 'indium':
-        defect_filename = "ZnO_Unitcell_Orth_3x2x2_InVZnO_Static.cif" # we modify this later
-        name += '_indium'
-    else:
-        defect_filename = "ZnO_Unitcell_Orth_3x2x2_InVZnO_Static.cif"
-        name += '_noDFT'
-    defect = io.read(os.path.join(model_path,defect_filename))
-
-    bulk = rotate90(bulk)
-    defect = rotate90(defect)
+    defect, bulk, name = load_defect_bulk(defect_type, name)
     
     total_number_of_layers_in_supercell = 6
     natural_defect_depth_position_in_supercell = 4

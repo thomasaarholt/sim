@@ -15,8 +15,11 @@ def stack_and_save():
         return int(entry.split('_d')[1].split('_')[0])
 
 
-    sorted(model_files, key=key)
-#    print(model_files)
+    try:
+        model_files = sorted(model_files, key=key)
+    except:
+        model_files = sorted(model_files)
+    print(model_files)
 
     files = []
     for p in pathlib.Path('./prism').iterdir():
@@ -38,7 +41,9 @@ def stack_and_save():
         def read(filenames):
             data = []
             for filename in filenames:
+                print(filename)
                 data.append(readMRC(filename))
+            print('Next')
             return np.asarray(data)
         s = hs.signals.Signal2D(read(files)).as_signal2D((0,3))
         s.metadata.add_node('Simulation')

@@ -11,8 +11,8 @@ def key(entry):
 files = sorted(files, key=key)
 
 for filename in files:
-    prismatic(filename, label="_slice1.6", limits = (0.35714285714285715, 0.6428571428571428), PRISM=True, savepath='prism', thermal_effects=False, firstFP=0, total_FP=1, sliceThickness=1.6218179)
-    prismatic(filename, label="_slice1.6", limits = (0.35714285714285715, 0.6428571428571428), PRISM=True, savepath='prism', thermal_effects=True, firstFP=0, total_FP=20, sliceThickness=1.6218179)
+    prismatic(filename, label="_slice1.6", limits = ({0}, {1}), PRISM=True, savepath='prism', thermal_effects=False, firstFP=0, total_FP=1, sliceThickness=1.6218179)
+    prismatic(filename, label="_slice1.6", limits = ({0}, {1}), PRISM=True, savepath='prism', thermal_effects=True, firstFP=0, total_FP=20, sliceThickness=1.6218179)
 
 from sim import stack_and_save
 stack_and_save()
