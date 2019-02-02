@@ -58,6 +58,8 @@ def stack_and_save(simulation_folder='prism'):
         fig, ax = plt.subplots(dpi=200)
         im = ax.imshow(haadf.data)
         print(haadf)
+        print(int(0.75/haadf.axes_manager[-1].scale))
+        print(haadf.axes_manager[-1].scale)
 
         fig2, ax = plt.subplots(dpi=200)
         im2 = ax.imshow(integrate(haadf).data)
