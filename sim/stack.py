@@ -22,8 +22,9 @@ def stack_and_save(simulation_folder='prism'):
             def read(filenames):
                 data = []
                 for filename in filenames:
-                    print(filename)
-                    data.append(readMRC(filename))
+                    if filename.endswith('.mrc'):
+                        print(filename)
+                        data.append(readMRC(filename))
                 print('Next')
                 return np.asarray(data)
             s = hs.signals.Signal2D(read(files)).as_signal2D((0, 3))
