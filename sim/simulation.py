@@ -29,7 +29,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects
         focus=0
 
         random_number = random.randint(0,10000)
-        list_of_random_numbers.append()
+        list_of_random_numbers.append(str(random_number))
 
         meta = pr.Metadata(
             filenameAtoms=file, 
