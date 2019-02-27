@@ -14,7 +14,8 @@ def stack_and_save(simulation_folder='prism'):
         if f.suffix == '.hspy' or f.suffix == '.mrc'
     ])
 
-    groups = [sorted(glob.glob('{}/{}*'.format(simulation_folder, f))) for f in names]
+    groups = [sorted(glob.glob('{}/{}*'.format(simulation_folder, f)))
+              for f in names]
 
     def save(files, name):
         if files[0].endswith('.mrc'):
@@ -50,10 +51,11 @@ def stack_and_save(simulation_folder='prism'):
 
             haadf = s.inav[40.:].sum()
         elif simulation_folder == 'multem':
-            s = hs.load(files, stack=True).swap_axes(-1,-2)
-            haadf = s.inav[1].sum() #multem
+            s = hs.load(files, stack=True).swap_axes(-1, -2)
+            haadf = s.inav[1].sum()  # multem
             haadf.data = np.flip(haadf.data, axis=-1)
         print('Begun saving!')
+
         def saveimg(filepath, fig=None):
             '''Save the current image with no whitespace
             Example filepath: "myfig.png" or r"C:\myfig.pdf" 
@@ -72,7 +74,6 @@ def stack_and_save(simulation_folder='prism'):
             fig.savefig(filepath, pad_inches=0, bbox_inches='tight')
 
         s.save("hyperspy/" + name + ".hspy", overwrite=True)
-
 
         fig, ax = plt.subplots(dpi=200)
         im = ax.imshow(haadf.data)
