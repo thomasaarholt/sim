@@ -34,7 +34,8 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
     XMin, XMax = limits
     YMin, YMax = limits
 
-    list_of_random_numbers = []
+    random_filename = os.path.join(savepath, name + label + '_random.txt')
+
     for FP_number in range(firstFP, total_FP):
         output = os.path.join(
             savepath, name + label + no_thermal_label +
@@ -46,9 +47,9 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
         alpha = 20.0e-3
         focus = 0
 
-        random_number = random.randint(0, 10000)
-        list_of_random_numbers.append(str(random_number))
-
+        random_number = random.randint(0, 100000)
+        with open(random_filename, 'a') as f:
+            f.write(str(random_number) + "\n")
         meta = pr.Metadata(
             filenameAtoms=file,
             algorithm=algorithm,
@@ -90,7 +91,3 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
         t2 = time()
         display('It took {:.2f} minutes, or {:.2f} hours'.format(
             (t2 - t1)/60, (t2 - t1)/3600))
-
-    random_filename = os.path.join(savepath, name + label + '_random.txt')
-    with open(random_filename, 'a') as f:
-        f.write("\n".join(list_of_random_numbers))
