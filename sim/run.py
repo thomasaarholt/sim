@@ -12,7 +12,7 @@ files = sorted(files)#, key=key)
 
 for filename in files:
     prismatic(filename, label="", limits = ({0}, {1}), PRISM=True, savepath='prism', thermal_effects=False, total_FP=1, sliceThickness=1.6218179)
-    prismatic(filename, label="", limits = ({0}, {1}), PRISM=True, savepath='prism', thermal_effects=True, total_FP=20, sliceThickness=1.6218179)
+    prismatic(filename, label="", limits = ({0}, {1}), PRISM=True, savepath='prism', thermal_effects=True, total_FP=50, sliceThickness=1.6218179)
 
 from sim import stack_and_save
 stack_and_save()
