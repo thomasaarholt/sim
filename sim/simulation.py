@@ -1,4 +1,4 @@
-def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects=True, firstFP=0, total_FP=50, probestep=0.15, sliceThickness=1.6218179):
+def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects=True, total_FP=50, probestep=0.15, sliceThickness=1.6218179):
     import os
     import pyprismatic as pr
     from IPython.display import display
@@ -13,8 +13,20 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None, thermal_effects
         savepath = 'prism' if PRISM else 'multislice'
     Path(savepath).mkdir(parents=True, exist_ok=True)
 
-    no_thermal_label = "" if thermal_effects else "_nothermal"
+    no_thermal_label = "_therm" if thermal_effects else "_notherm"
     algorithm = 'prism' if PRISM else 'multislice'
+
+    title = name + label + no_thermal_label
+    print(title)
+    existing_files = list(Path(savepath).glob(title + '*'))
+    if existing_files:
+        nums = []
+        for l in existing_files:
+            nums.append(int(l.stem.split("_FP")[1]))
+        firstFP = max(nums) + 1
+    else:
+        firstFP = 0
+
     XMin, XMax = limits
     YMin, YMax = limits
 
