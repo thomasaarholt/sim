@@ -35,8 +35,12 @@ def create(specs, **kwargs):
     print(central_XY(central_fraction, sidelength))
 
     target_folder = kwargs['main_path'] / model_folder_name
-    copy_file(target_folder)
-
+    with open(str(Path(__file__).parent / 'run.py'), 'r') as myfile:
+        run_contents = myfile.read()
+    run_contents = run_contents.format(XMin, XMax)
+    with open(str(target_folder / 'run.py'), 'a') as the_file:
+        the_file.write(run_contents)
+    copy_file(target_folder) # copy save.py
 
 def create_cube(sidelength=3, defect_type='relaxed', main_path="", temperature='RT', comment="", central_fraction=2.0):
     from ase import io
@@ -93,7 +97,7 @@ def create_cube(sidelength=3, defect_type='relaxed', main_path="", temperature='
     run_contents = run_contents.format(XMin, XMax)
     with open(str(target_folder / 'run.py'), 'a') as the_file:
         the_file.write(run_contents)
-    copy_file(target_folder)
+    copy_file(target_folder) # copy save.py
 
     save_cell(cell=model, name=model.info['name'], path=model_path,
               only_save='prismatic', temperature=temperature)
