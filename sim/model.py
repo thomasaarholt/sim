@@ -32,7 +32,7 @@ def create(specs, **kwargs):
             defect_depth_position=defect_position, **kwargs,
         ) for defect_position in defect_range]
 
-    print(central_XY(central_fraction, sidelength))
+    XMin, XMax = central_XY(central_fraction, sidelength)
 
     target_folder = kwargs['main_path'] / model_folder_name
     with open(str(Path(__file__).parent / 'run.py'), 'r') as myfile:
