@@ -5,9 +5,11 @@ from IPython.display import display
 import random
 from pathlib import Path
 from time import time
+import numpy as np
 
 def make_file(output):
     try :
+        print('Reading {}'.format(Path(output).stem))
         data = readMRC(output)
     except:
         return True # file does not exist, so continue making it
@@ -34,6 +36,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
     algorithm = 'prism' if PRISM else 'multislice'
 
     title = name + label + no_thermal_label
+    ''' # No longer need this because I check if every file exists
     print(title)
     existing_files = list(Path(savepath).glob(title + '*'))
     if existing_files:
@@ -43,7 +46,8 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
         firstFP = max(nums) + 1
     else:
         firstFP = 0
-
+    '''
+    firstFP = 0
     XMin, XMax = limits
     YMin, YMax = limits
 
