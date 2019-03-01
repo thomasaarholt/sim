@@ -1,13 +1,26 @@
+from sim.fileio import readMRC
+import os
+import pyprismatic as pr
+from IPython.display import display
+import random
+from pathlib import Path
+from time import time
 
+def make_file(output):
+    try :
+        data = readMRC(output)
+    except:
+        return True # file does not exist, so continue making it
+    if np.allclose(data[0,0,0], data[0,0]) or np.isnan(data).any() or np.isinf(data).any() or data.min() < 1e-10 or data.max() > 1:
+        print('File is broken')
+        return True # File is broken, remake file
+    else:
+        return False # File is fine
 
 def prismatic(file, limits, label="", PRISM=True, savepath=None,
               thermal_effects=True, total_FP=50, probestep=0.15,
               sliceThickness=1.6218179):
-    import os
-    import pyprismatic as pr
-    from IPython.display import display
-    import random
-    from pathlib import Path
+
     file = os.path.abspath(file)
 
     _, filename = os.path.split(file)
@@ -84,10 +97,9 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
             numStreamsPerGPU=3,
             batchSizeTargetGPU=1,
         )
-
-        from time import time
-        t1 = time()
-        meta.go()
-        t2 = time()
-        display('It took {:.2f} minutes, or {:.2f} hours'.format(
-            (t2 - t1)/60, (t2 - t1)/3600))
+        while make_file(output):        
+            t1 = time()
+            meta.go()
+            t2 = time()
+            display('It took {:.2f} minutes, or {:.2f} hours'.format(
+                (t2 - t1)/60, (t2 - t1)/3600))
