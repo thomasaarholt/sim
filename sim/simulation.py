@@ -21,7 +21,7 @@ def make_file(output):
 
 def prismatic(file, limits, label="", PRISM=True, savepath=None,
               thermal_effects=True, total_FP=50, probestep=0.15,
-              sliceThickness=1.6218179):
+              sliceThickness=1.6218179, numGPUs=4):
 
     file = os.path.abspath(file)
 
@@ -89,7 +89,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
             scanWindowYMax=YMax,
             numFP=1,
             probeDefocus=focus,
-            numGPUs=4,
+            numGPUs=numGPUs,
             alsoDoCPUWork=False,
             numThreads=10,
             includeThermalEffects=include_thermal_effects,
