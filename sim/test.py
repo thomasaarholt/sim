@@ -18,5 +18,6 @@ def test():
     meta = Metadata(filenameAtoms='temp.XYZ', filenameOutput='output.mrc')
     meta.algorithm = 'multislice'
     meta.alsoDoCPUWork = False
+    meta.go()
     os.remove("temp.XYZ")
     os.remove("output.mrc")
