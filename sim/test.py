@@ -1,7 +1,7 @@
 def test():
+    from pyprismatic.params import Metadata
     import os
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-    from pyprismatic.params import Metadata
 
     with open('temp.XYZ', 'w') as fid:
         fid.write("one unit cell of 100 silicon\n\
