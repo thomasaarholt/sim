@@ -1,4 +1,6 @@
+from sim import stack_and_save
 from sim import prismatic
+from sim.defocus import get_series_defocus_and_weight
 import pathlib
 files = []
 for p in pathlib.Path('./Models').iterdir():
@@ -8,11 +10,16 @@ for p in pathlib.Path('./Models').iterdir():
 # def key(entry):
 #     return int(entry.split('_d')[1].split('_')[0])
 
-files = sorted(files)#, key=key)
+files = sorted(files)  # , key=key)
+
+sigma, defocus_list, weighting_list = get_series_defocus_and_weight(
+    ZLP=0.9, Voltage=3e5, Chromatic=1.6e-3)
 
 for filename in files:
-    prismatic(filename, label="", limits = ({0}, {1}), PRISM=True, savepath='prism', thermal_effects=False, total_FP=1, sliceThickness=1.6218179)
-    prismatic(filename, label="", limits = ({0}, {1}), PRISM=True, savepath='prism', thermal_effects=True, total_FP=50, sliceThickness=1.6218179)
+    for i, defocus_delta in defocus_list:
+        prismatic(
+            filename, label="defocus_{}".format(i), limits=({0}, {1}), 
+            PRISM=True, savepath='prism', thermal_effects=True, 
+            total_FP=50, sliceThickness=1.6218179, defocus_delta=defocus_delta)
 
-from sim import stack_and_save
 stack_and_save()

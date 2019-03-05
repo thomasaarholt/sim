@@ -7,21 +7,23 @@ from pathlib import Path
 from time import time
 import numpy as np
 
+
 def make_file(output):
-    try :
+    try:
         print('Reading {}'.format(Path(output).stem))
         data = readMRC(output)
     except:
-        return True # file does not exist, so continue making it
-    if np.allclose(data[0,0,0], data[0,0]) or np.isnan(data).any() or np.isinf(data).any() or data.min() < 1e-10 or data.max() > 1:
+        return True  # file does not exist, so continue making it
+    if np.allclose(data[0, 0, 0], data[0, 0]) or np.isnan(data).any() or np.isinf(data).any() or data.min() < 1e-10 or data.max() > 1:
         print('File is broken')
-        return True # File is broken, remake file
+        return True  # File is broken, remake file
     else:
-        return False # File is fine
+        return False  # File is fine
+
 
 def prismatic(file, limits, label="", PRISM=True, savepath=None,
               thermal_effects=True, total_FP=50, probestep=0.15,
-              sliceThickness=1.6218179, numGPUs=4):
+              sliceThickness=1.6218179, numGPUs=4, defocus_delta=0):
 
     file = os.path.abspath(file)
 
@@ -35,25 +37,12 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
     no_thermal_label = "_therm" if thermal_effects else "_notherm"
     algorithm = 'prism' if PRISM else 'multislice'
 
-    title = name + label + no_thermal_label
-    ''' # No longer need this because I check if every file exists
-    print(title)
-    existing_files = list(Path(savepath).glob(title + '*'))
-    if existing_files:
-        nums = []
-        for l in existing_files:
-            nums.append(int(l.stem.split("_FP")[1]))
-        firstFP = max(nums) + 1
-    else:
-        firstFP = 0
-    '''
-    firstFP = 0
     XMin, XMax = limits
     YMin, YMax = limits
 
     random_filename = os.path.join(savepath, name + label + '_random.txt')
 
-    for FP_number in range(firstFP, total_FP):
+    for FP_number in range(total_FP):
         output = os.path.join(
             savepath, name + label + no_thermal_label +
             '_FP{:03d}.mrc'.format(FP_number))
@@ -88,7 +77,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
             scanWindowYMin=YMin,
             scanWindowYMax=YMax,
             numFP=1,
-            probeDefocus=focus,
+            probeDefocus=focus + defocus_delta,
             numGPUs=numGPUs,
             alsoDoCPUWork=False,
             numThreads=10,
@@ -101,7 +90,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
             numStreamsPerGPU=3,
             batchSizeTargetGPU=1,
         )
-        while make_file(output):        
+        while make_file(output):
             t1 = time()
             meta.go()
             t2 = time()
