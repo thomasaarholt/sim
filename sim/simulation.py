@@ -14,8 +14,20 @@ def make_file(output):
         data = readMRC(output)
     except:
         return True  # file does not exist, so continue making it
-    if np.allclose(data[0, 0, 0], data[0, 0]) or np.isnan(data).any() or np.isinf(data).any() or data.min() < 1e-10 or data.max() > 1:
-        print('File is broken')
+    if np.allclose(data[0, 0, 0], data[0, 0]):
+        print('....identical data: Broken!')
+        return True  # File is broken, remake file
+    elif np.isnan(data).any():
+        print('....file has nans: Broken!')
+        return True  # File is broken, remake file
+    elif np.isinf(data).any():
+        print('....file has infs: Broken!')
+        return True  # File is broken, remake file
+    elif data.min() < 1e-10:
+        print('....data has really small values: Broken!')
+        return True  # File is broken, remake file
+    elif data.max() > 1:
+        print('....data has more than one count total: Broken!')
         return True  # File is broken, remake file
     else:
         print('..ok!')
