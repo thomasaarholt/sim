@@ -40,7 +40,8 @@ def create(specs, **kwargs):
     run_contents = run_contents.format(XMin, XMax)
     with open(str(target_folder / 'run.py'), 'a') as the_file:
         the_file.write(run_contents)
-    copy_file(target_folder) # copy save.py
+    copy_file(target_folder)  # copy save.py
+
 
 def create_cube(sidelength=3, defect_type='relaxed', main_path="", temperature='RT', comment="", central_fraction=2.0):
     from ase import io
@@ -97,7 +98,53 @@ def create_cube(sidelength=3, defect_type='relaxed', main_path="", temperature='
     run_contents = run_contents.format(XMin, XMax)
     with open(str(target_folder / 'run.py'), 'a') as the_file:
         the_file.write(run_contents)
-    copy_file(target_folder) # copy save.py
+    copy_file(target_folder)  # copy save.py
+
+    save_cell(cell=model, name=model.info['name'], path=model_path,
+              only_save='prismatic', temperature=temperature)
+    save_cell(cell=model, name=model.info['name'],
+              path=model_path, only_save='xyz', temperature=temperature)
+    save_cell(cell=multem_cell, name=multem_cell.info['name'],
+              path=model_path, only_save='multem', temperature=temperature)
+    save_cell(cell=multem_cell, name=multem_cell.info['name'],
+              path=model_path, only_save='xyz', temperature=temperature)
+
+
+def make_super(sidelength=3, defect_type='relaxed', main_path="", temperature='RT', comment="", central_fraction=2.0):
+    from ase import io
+    from ase.build import stack, make_supercell
+    from pathlib import Path
+    import os
+
+    model_folder_name = "cube_{}_{}".format(
+        defect_type.capitalize(), temperature)
+    if comment:
+        model_folder_name += "_" + comment
+    defect, bulk, name = load_defect_bulk(defect_type, name="")
+
+    model = make_supercell(defect, np.diag(
+        [sidelength, sidelength, sidelength]))
+
+    model.info['name'] = model_folder_name
+    if main_path == "":
+        raise ValueError(
+            'main_path must be the parent folder of where I am running the simulation from')
+    model_path = Path(main_path) / model_folder_name / 'Models'
+    model_path.mkdir(parents=True, exist_ok=True)
+    model_path = str(model_path)
+
+    XMin, XMax = central_XY(central_fraction, sidelength)
+
+    multem_cell = flip_for_MULTEM(model)
+    multem_cell.info['name'] += '_Multem'
+    target_folder = Path(main_path) / model_folder_name
+
+    with open(str(Path(__file__).parent / 'run.py'), 'r') as myfile:
+        run_contents = myfile.read()
+    run_contents = run_contents.format(XMin, XMax)
+    with open(str(target_folder / 'run.py'), 'a') as the_file:
+        the_file.write(run_contents)
+    copy_file(target_folder)  # copy save.py
 
     save_cell(cell=model, name=model.info['name'], path=model_path,
               only_save='prismatic', temperature=temperature)
