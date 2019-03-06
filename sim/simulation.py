@@ -10,7 +10,7 @@ import numpy as np
 
 def make_file(output):
     try:
-        print('Reading {}'.format(Path(output).stem))
+        print('Reading {}'.format(Path(output).stem + ".."), end='')
         data = readMRC(output)
     except:
         return True  # file does not exist, so continue making it
@@ -18,6 +18,7 @@ def make_file(output):
         print('File is broken')
         return True  # File is broken, remake file
     else:
+        print('..ok!')
         return False  # File is fine
 
 
