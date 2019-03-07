@@ -186,7 +186,8 @@ class Metadata(object):
             print('Could not set cell dimensions from file {}'.format(Fname))
             return
         inf.readline()
-        self.cellDimX, self.cellDimY, self.cellDimZ = [float(i) for i in inf.readline().split()]
+        self.cellDimX, self.cellDimY, self.cellDimZ = [
+            float(i) for i in inf.readline().split()]
         inf.close()
 
     @property
@@ -195,10 +196,9 @@ class Metadata(object):
 
     @filenameAtoms.setter
     def filenameAtoms(self, filenameAtoms):
-        if filenameAtoms != "": # do not set cell dimensions for default empty string
+        if filenameAtoms != "":  # do not set cell dimensions for default empty string
             self._filenameAtoms = filenameAtoms
             self._setCellDims(filenameAtoms)
-
 
     def readParameters(self, Fname):
         """Read parameters from ``Fname`` previously stored by ``writeParameters()``.
