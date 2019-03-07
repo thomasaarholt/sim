@@ -23,9 +23,9 @@ def make_file(output):
     elif np.isinf(data).any():
         print('....file has infs: Broken!')
         return True  # File is broken, remake file
-    elif data.min() < 1e-10:
-        print('....data has really small values: Broken!')
-        return True  # File is broken, remake file
+    # elif data.min() < 1e-15:
+    #     print('....data has really small values: Broken!')
+    #     return True  # File is broken, remake file
     elif data.max() > 1:
         print('....data has more than one count total: Broken!')
         return True  # File is broken, remake file
