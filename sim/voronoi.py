@@ -34,7 +34,7 @@ def integrate(s, add_atom_positions=True):
     sub.refine_atom_positions_using_center_of_mass(show_progressbar=False)
     sub.refine_atom_positions_using_2d_gaussian(show_progressbar=False)
 
-    x, y = sub.atom_positions
+    x, y = sub.atom_positions.T
     I, IM, PM = am.integrate(s.data, x, y, show_progressbar=False)
 
     from sim.voronoi import remove_integrated_edge_cells

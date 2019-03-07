@@ -22,4 +22,4 @@ for filename in files:
             PRISM=True, savepath='prism', thermal_effects=True, 
             total_FP=50, sliceThickness=1.6218179, defocus_delta=defocus_delta)
 
-stack_and_save()
+stack_and_save(add_atom_positions=False)
