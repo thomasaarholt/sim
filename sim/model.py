@@ -142,7 +142,7 @@ def make_super(sidelength=3, defect_type='relaxed', main_path="", temperature='R
     with open(str(Path(__file__).parent / 'run.py'), 'r') as myfile:
         run_contents = myfile.read()
     run_contents = run_contents.format(XMin, XMax)
-    with open(str(target_folder / 'run.py'), 'a') as the_file:
+    with open(str(target_folder / 'run.py'), 'w') as the_file:
         the_file.write(run_contents)
     copy_file(target_folder)  # copy save.py
 

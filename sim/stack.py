@@ -9,6 +9,7 @@ from tqdm.auto import tqdm
 
 
 def stack_and_save(simulation_folder='prism', add_atom_positions=True):
+    plt.close('all')
     names = set([
         f.stem.split('_FP')[0] for f in
         Path("{}/".format(simulation_folder)).iterdir()
@@ -28,7 +29,6 @@ def read(filenames):
         if filename.endswith('.mrc'):
             tqdm.write(filename)
             data.append(readMRC(filename))
-    tqdm.write('Next')
     return np.asarray(data)
 
 
