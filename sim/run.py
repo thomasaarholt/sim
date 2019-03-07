@@ -1,4 +1,4 @@
-from sim import stack_and_save
+from sim.stack import stack_and_save
 from sim import prismatic
 from sim.defocus import get_series_defocus_and_weight
 import pathlib
