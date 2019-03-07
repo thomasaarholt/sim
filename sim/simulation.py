@@ -36,7 +36,7 @@ def make_file(output):
 
 def prismatic(file, limits, label="", PRISM=True, savepath=None,
               thermal_effects=True, total_FP=50, probestep=0.15,
-              sliceThickness=1.6218179, numGPUs=4, defocus_delta=0):
+              sliceThickness=1.6218179, numGPUs=4, defocus_delta=0, tile=1):
 
     file = os.path.abspath(file)
 
@@ -52,6 +52,8 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
 
     XMin, XMax = limits
     YMin, YMax = limits
+
+    tileX = tileY = tile
 
     random_filename = os.path.join(savepath, name + label + '_random.txt')
 
@@ -95,8 +97,8 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
             alsoDoCPUWork=False,
             numThreads=10,
             includeThermalEffects=include_thermal_effects,
-            tileX=1,
-            tileY=1,
+            tileX=tileX,
+            tileY=tileY,
             tileZ=1,
             transferMode='singlexfer',
             randomSeed=random_number,

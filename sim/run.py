@@ -15,16 +15,19 @@ files = sorted(files)  # , key=key)
 sigma, defocus_list, weighting_list = get_series_defocus_and_weight(
     ZLP=0.9, Voltage=3e5, Chromatic=1.6e-3)
 
+defocus_list = [0]
 for filename in files:
     for i, defocus_delta in enumerate(defocus_list):
         prismatic(
             filename, label="_defocus_"+str(i), limits=({0}, {1}), 
             PRISM=True, savepath='prism', thermal_effects=True, 
-            total_FP=50, sliceThickness=1.6218179, defocus_delta=defocus_delta)
+            total_FP=50, sliceThickness=1.6218179, defocus_delta=defocus_delta,
+            tile=3)
 
         prismatic(
             filename, label="_defocus_"+str(i), limits=({0}, {1}), 
             PRISM=True, savepath='prism', thermal_effects=False, 
-            total_FP=1, sliceThickness=1.6218179, defocus_delta=defocus_delta)
+            total_FP=1, sliceThickness=1.6218179, defocus_delta=defocus_delta,
+            tile=3)
 
 stack_and_save(add_atom_positions=False)
