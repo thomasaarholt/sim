@@ -2,7 +2,7 @@ import atomap.api as am
 import numpy as np
 
 
-def integrate(s):
+def integrate(s, add_atom_positions=True):
     # x, y = am.get_atom_positions(s, int(0.75/s.axes_manager[-1].scale)).T
     atom_positions = am.get_atom_positions(
         s, int(0.75/s.axes_manager[-1].scale))
@@ -26,8 +26,8 @@ def integrate(s):
         [105.98044683180512, 137.62375975092377],
         [124.81307308060764, 136.93893697824004],
         [144.33052210209388, 137.62375975092377]]
-
-    atom_positions = np.concatenate((atom_positions, edge_atom_positions))
+    if add_atom_positions:
+        atom_positions = np.concatenate((atom_positions, edge_atom_positions))
 
     sub = am.Sublattice(atom_positions, s)
     sub.find_nearest_neighbors()
