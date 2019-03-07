@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import glob
 from pathlib import Path
+from tqdm.auto import tqdm
 
 
 def stack_and_save(simulation_folder='prism', add_atom_positions=True):
@@ -16,21 +17,23 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=True):
 
     groups = [sorted(glob.glob('{}/{}*'.format(simulation_folder, f)))
               for f in names]
-    for files, name in zip(groups, names):
-        print('Stacking {}'.format(name))
+    for files, name in tqdm(zip(groups, names), total=len(names)):
+        tqdm.write('Stacking {}'.format(name))
         save(files, name, simulation_folder, add_atom_positions)
+
+
+def read(filenames):
+    data = []
+    for filename in filenames:
+        if filename.endswith('.mrc'):
+            tqdm.write(filename)
+            data.append(readMRC(filename))
+    tqdm.write('Next')
+    return np.asarray(data)
 
 
 def save(files, name, simulation_folder='prism', add_atom_positions=True):
     if files[0].endswith('.mrc'):
-        def read(filenames):
-            data = []
-            for filename in filenames:
-                if filename.endswith('.mrc'):
-                    print(filename)
-                    data.append(readMRC(filename))
-            print('Next')
-            return np.asarray(data)
         s = hs.signals.Signal2D(read(files)).as_signal2D((0, 3))
         s.metadata.add_node('Simulation')
         s.metadata.Simulation.Software = simulation_folder
@@ -58,7 +61,7 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True):
         s = hs.load(files, stack=True).swap_axes(-1, -2)
         haadf = s.inav[1].sum()  # multem
         haadf.data = np.flip(haadf.data, axis=-1)
-    print('Begun saving!')
+    tqdm.write('Begun saving!')
 
     s.save("hyperspy/" + name + ".hspy", overwrite=True)
 
