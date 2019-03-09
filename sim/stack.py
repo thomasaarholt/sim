@@ -28,7 +28,6 @@ def read(filenames):
     data = []
     for filename in filenames:
         if filename.endswith('.mrc'):
-            tqdm.write(filename)
             data.append(readMRC(filename))
     return np.asarray(data)
 
@@ -76,10 +75,10 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True, save_h
     im2 = ax.imshow(IM.data)
     saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
 
-    try:
-        error(I, name)
-    except:
-        print('Did not run save standard error with FP graph')
+    #try:
+    error(I, name)
+    #except:
+        #print('Did not run save standard error with FP graph')
 
 
 def error(I, name):
