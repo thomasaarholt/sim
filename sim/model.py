@@ -579,6 +579,7 @@ def debye_waller(element='Zn', temperature='RT'):
             dw = 0.06435856712918735
     return dw
 
+
 def atomic_number_to_symbol(number):
     if number == 8:
         return "O"
@@ -586,6 +587,7 @@ def atomic_number_to_symbol(number):
         return "Zn"
     elif number == 49:
         return "In"
+
 
 def frozen_phonon(model, temperature):
     model = model.copy()
