@@ -43,7 +43,9 @@ def create(specs, **kwargs):
     copy_file(target_folder)  # copy save.py
 
 
-def create_cube(sidelength=3, defect_type='relaxed', main_path="", temperature='RT', comment="", central_fraction=2.0):
+def create_cube(
+        sidelength=3, defect_type='relaxed', main_path="",
+        temperature='RT', comment="", central_fraction=2.0):
     from ase import io
     from ase.build import stack
     from pathlib import Path
@@ -110,7 +112,9 @@ def create_cube(sidelength=3, defect_type='relaxed', main_path="", temperature='
               path=model_path, only_save='xyz', temperature=temperature)
 
 
-def make_super(sidelength=3, defect_type='relaxed', main_path="", temperature='RT', comment="", central_fraction=2.0):
+def make_super(
+        sidelength=3, defect_type='relaxed', main_path="",
+        temperature='RT', comment="", central_fraction=2.0):
     from ase import io
     from ase.build import stack, make_supercell
     from pathlib import Path
@@ -312,9 +316,11 @@ def create_defect_by_stacking(defect_depth_position, sidelength, final_depth, de
 
 def create_and_save_model_by_stacking(
         defect_depth_position, sidelength, final_depth, defect_type='relaxed',
-        temperature='LN2', final_sidelength=None, model_folder_name='Models', only_save=False, main_path=None):
-    '''Create defect at a certain layer position, 
-    with a supercell sidelength (odd number), and the total final depth in layers
+        temperature='LN2', final_sidelength=None, model_folder_name='Models', 
+        only_save=False, main_path=None):
+    '''Create defect at a certain layer position,
+    with a supercell sidelength (odd number), and the 
+    total final depth in layers
     defect_type:
     - 'relaxed'
     - 'static'
@@ -347,10 +353,12 @@ def create_and_save_model_by_stacking(
 
 def rotate90(cell, axis1=0, axis2=2):
     cell2 = cell.copy()
-    cell2.positions[:, axis1], cell2.positions[:,
-                                               axis2] = cell2.positions[:, axis2], cell2.positions[:, axis1].copy()
-    cell2.cell[axis1, axis1], cell2.cell[axis2,
-                                         axis2] = cell2.cell[axis2, axis2], cell2.cell[axis1, axis1].copy()
+    cell2.positions[:, axis1], cell2.positions[
+        :, axis2] = cell2.positions[:, axis2], cell2.positions[
+            :, axis1].copy()
+    cell2.cell[axis1, axis1], cell2.cell[
+        axis2, axis2] = cell2.cell[axis2, axis2], cell2.cell[
+            axis1, axis1].copy()
     return cell2
 
 
@@ -387,7 +395,9 @@ def angular_resolution(sample_length_Å=50, kV=300):
     return ang_res
 
 
-def check_simulation_parameters(sample_length_Å=50, potential_spacing=0.05*1e-10, kV=300,  alpha=20e-3,):
+def check_simulation_parameters(
+        sample_length_Å=50, 
+        potential_spacing=0.05*1e-10, kV=300,  alpha=20e-3,):
     print('Max scattering angle is {:.2f}'.format(
         max_scattering_angle_mrad_prismatic(kV, potential_spacing)))
     check_sample_size_big_enough(sample_length_Å, kV, alpha)
