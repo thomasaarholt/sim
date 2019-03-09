@@ -77,8 +77,11 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True, save_h
     im2 = ax.imshow(IM.data)
     saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
 
+    print('Series shape', s)
+
     #try:
     I, IM, PM = integrate(haadf_series, add_atom_positions)
+
     error(I, name)
     #except:
         #print('Did not run save standard error with FP graph')
