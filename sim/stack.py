@@ -1,7 +1,7 @@
 import hyperspy.api as hs
 from sim.fileio import readMRC
 from sim.voronoi import integrate
-from sim.stats import get_atom_indices
+from sim.stats import get_atom_indices, plot_standard_error_with_phonons
 import numpy as np
 import matplotlib.pyplot as plt
 import glob
@@ -75,10 +75,13 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True):
     im2 = ax.imshow(IM.data)
     saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
 
-    indium_index, vacancy_index, bulk_index = get_atom_indices(I)
-    fig = plot_standard_error_with_phonons(
-        a, indium_index, vacancy_index, bulk_index)
-    fig.savefig("hyperspy/" + name + "_error.png", dpi=200)
+    try:
+        indium_index, vacancy_index, bulk_index = get_atom_indices(I)
+        fig = plot_standard_error_with_phonons(
+            a, indium_index, vacancy_index, bulk_index)
+        fig.savefig("hyperspy/" + name + "_error.png", dpi=200)
+    except:
+        print('Did not run save standard error with FP graph')
 
 
 def saveimg(filepath, fig=None):
