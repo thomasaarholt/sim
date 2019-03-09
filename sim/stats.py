@@ -23,6 +23,18 @@ def mean_and_std_error(arr):
     return axis, mean, std
 
 
+def get_atom_indices(integrated_list):
+    sum_list = integrated_list.sum(axis=tuple(range(1, integrated_list.ndim)))
+    indium_index = np.nanargmax(sum_list)
+    vacancy_index = np.nanargmin(sum_list)
+    bulk_index = 0
+    bulk = sum_list[bulk_index]
+    while np.isnan(bulk):
+        bulk = sum_list[bulk_index]
+        bulk_index = bulk_index + 1
+    return indium_index, vacancy_index, bulk_index
+
+
 def plot_standard_error_with_phonons(integrated_list, indium_index=27, vacancy_index=28, bulk_index=20):
     fig = plt.figure()
 

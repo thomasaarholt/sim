@@ -1,6 +1,7 @@
 import hyperspy.api as hs
 from sim.fileio import readMRC
 from sim.voronoi import integrate
+from sim.stats import get_atom_indices
 import numpy as np
 import matplotlib.pyplot as plt
 import glob
@@ -69,10 +70,15 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True):
     im = ax.imshow(haadf.data)
     saveimg("hyperspy/" + name + "_HAADF_sum.png", fig=fig)
 
-    voronoi = integrate(haadf, add_atom_positions)
+    I, IM, PM = integrate(haadf, add_atom_positions)
     fig2, ax = plt.subplots(dpi=200)
-    im2 = ax.imshow(voronoi.data)
+    im2 = ax.imshow(IM.data)
     saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
+
+    indium_index, vacancy_index, bulk_index = get_atom_indices(I)
+    fig = plot_standard_error_with_phonons(
+        a, indium_index, vacancy_index, bulk_index)
+    fig.savefig("hyperspy/" + name + "_error.png", dpi=200)
 
 
 def saveimg(filepath, fig=None):
