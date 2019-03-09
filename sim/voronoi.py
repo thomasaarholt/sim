@@ -5,7 +5,7 @@ import numpy as np
 def integrate(s, add_atom_positions=True):
     # x, y = am.get_atom_positions(s, int(0.75/s.axes_manager[-1].scale)).T
     atom_positions = am.get_atom_positions(
-        s, int(0.75/s.axes_manager[-1].scale))
+        s.sum(), int(0.75/s.axes_manager[-1].scale))
 
     # the following were added for this specific dataset,
     # using the gui tool in atomap
