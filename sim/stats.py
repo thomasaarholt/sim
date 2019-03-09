@@ -35,7 +35,8 @@ def get_atom_indices(integrated_list):
     return indium_index, vacancy_index, bulk_index
 
 
-def plot_standard_error_with_phonons(integrated_list, indium_index=27, vacancy_index=28, bulk_index=20):
+def plot_standard_error_with_phonons(
+        integrated_list, indium_index=27, vacancy_index=28, bulk_index=20):
     fig = plt.figure()
 
     axis, means, std = mean_and_std_error(integrated_list[indium_index])

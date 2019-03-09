@@ -56,7 +56,9 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True, save_h
         s.axes_manager[3].scale = 0.15
         s.axes_manager[3].units = 'Å'
 
-        haadf = s.inav[40.:].sum()
+        haadf_series = s.inav[40.:].sum(0)
+        haadf = haadf_series.sum()
+
     elif simulation_folder == 'multem':
         s = hs.load(files, stack=True).swap_axes(-1, -2)
         haadf = s.inav[1].sum()  # multem
@@ -76,6 +78,7 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True, save_h
     saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
 
     #try:
+    I, IM, PM = integrate(haadf_series, add_atom_positions)
     error(I, name)
     #except:
         #print('Did not run save standard error with FP graph')
