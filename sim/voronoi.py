@@ -4,8 +4,9 @@ import numpy as np
 
 def integrate(s, add_atom_positions=True):
     # x, y = am.get_atom_positions(s, int(0.75/s.axes_manager[-1].scale)).T
+    image = s.sum()
     atom_positions = am.get_atom_positions(
-        s.sum(), int(0.75/s.axes_manager[-1].scale))
+        image, int(0.75/s.axes_manager[-1].scale))
 
     # the following were added for this specific dataset,
     # using the gui tool in atomap
@@ -29,7 +30,7 @@ def integrate(s, add_atom_positions=True):
     if add_atom_positions:
         atom_positions = np.concatenate((atom_positions, edge_atom_positions))
 
-    sub = am.Sublattice(atom_positions, s)
+    sub = am.Sublattice(atom_positions, image)
     sub.find_nearest_neighbors()
     sub.refine_atom_positions_using_center_of_mass(show_progressbar=False)
     sub.refine_atom_positions_using_2d_gaussian(show_progressbar=False)
@@ -37,11 +38,10 @@ def integrate(s, add_atom_positions=True):
     x, y = sub.atom_positions.T
     I, IM, PM = am.integrate(s.data, x, y, show_progressbar=False)
 
-    from sim.voronoi import remove_integrated_edge_cells
     I2, IM2, PM2 = remove_integrated_edge_cells(I, IM, PM)
 
     # voronoi_map = am.integrate(s, x, y, show_progressbar=False)[1]
-    return IM2  # voronoi_map
+    return I2, IM2, PM2  # voronoi_map
 
 
 def _border_elems(image, pixels=1):
@@ -101,7 +101,7 @@ def remove_integrated_edge_cells(i_points, i_record, p_record,
     border_indices = np.array(list(set(border)))
     indices = np.in1d(p_record, border_indices).reshape(p_record.shape)
     i_points[border_indices] = np.nan if use_nans else 0
-    i_record.data[indices] = np.nan if use_nans else 0
+    i_record.data[..., indices] = np.nan if use_nans else 0
     p_record[indices] = -1
 
     if not inplace:

@@ -1,5 +1,6 @@
 from sim.voronoi import integrate
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def error(arr):
@@ -23,7 +24,7 @@ def mean_and_std_error(arr):
 
 
 def plot_standard_error_with_phonons(integrated_list, indium_index=27, vacancy_index=28, bulk_index=20):
-    plt.figure()
+    fig = plt.figure()
 
     axis, means, std = mean_and_std_error(integrated_list[indium_index])
     plt.errorbar(axis-0.1, means, std, fmt='', color='red',
@@ -39,5 +40,4 @@ def plot_standard_error_with_phonons(integrated_list, indium_index=27, vacancy_i
     plt.xlabel('Summed number of frozen phonons')
     plt.ylabel('Voronoi Intensity')
     plt.legend()
-
     return fig
