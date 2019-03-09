@@ -83,6 +83,7 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True, save_h
 
 def error(I, name):
     indium_index, vacancy_index, bulk_index = get_atom_indices(I)
+    print(indium_index, vacancy_index, bulk_index)
     fig = plot_standard_error_with_phonons(
         I, indium_index, vacancy_index, bulk_index)
     fig.savefig("hyperspy/" + name + "_error.png", dpi=200)
