@@ -34,7 +34,7 @@ def read(filenames):
 
 def save(files, name, simulation_folder='prism', add_atom_positions=True, save_hspy=True):
     if files[0].endswith('.mrc'):
-        s = hs.signals.Signal2D(read(files)).as_signal2D((0, 3))
+        s = hs.signals.Signal2D(read(files)).as_signal2D((0, -1))
         s.metadata.add_node('Simulation')
         s.metadata.Simulation.Software = simulation_folder
 
@@ -48,13 +48,13 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True, save_h
         s.axes_manager[1].offset = 0
         s.axes_manager[1].scale = 1
 
-        s.axes_manager[2].name = 'X-Axis'
-        s.axes_manager[2].scale = 0.15
-        s.axes_manager[2].units = 'Å'
+        s.axes_manager[-2].name = 'X-Axis'
+        s.axes_manager[-2].scale = 0.15
+        s.axes_manager[-2].units = 'Å'
 
-        s.axes_manager[3].name = 'Y-Axis'
-        s.axes_manager[3].scale = 0.15
-        s.axes_manager[3].units = 'Å'
+        s.axes_manager[-1].name = 'Y-Axis'
+        s.axes_manager[-1].scale = 0.15
+        s.axes_manager[-1].units = 'Å'
 
         haadf_series = s.inav[40.:].sum(0)
         haadf = haadf_series.sum()
@@ -77,14 +77,9 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True, save_h
     im2 = ax.imshow(IM.data)
     saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
 
-    print('Series shape', s)
-
-    #try:
-    I, IM, PM = integrate(haadf_series, add_atom_positions)
-
-    error(I, name)
-    #except:
-        #print('Did not run save standard error with FP graph')
+    if len(haadf_series.axes_manager.navigation_axes):
+        I, IM, PM = integrate(haadf_series, add_atom_positions)
+        error(I, name)
 
 
 def error(I, name):

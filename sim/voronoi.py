@@ -101,8 +101,6 @@ def remove_integrated_edge_cells(i_points, i_record, p_record,
     border_indices = np.array(list(set(border)))
     indices = np.in1d(p_record, border_indices).reshape(p_record.shape)
     i_points[border_indices] = np.nan if use_nans else 0
-    print('IM shape:', i_record.data.shape)
-    print('Indices shape:', indices.shape)
     i_record.data[..., indices] = np.nan if use_nans else 0
     p_record[indices] = -1
 
