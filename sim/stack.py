@@ -65,6 +65,7 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True, save_h
         haadf.data = np.flip(haadf.data, axis=-1)
     tqdm.write('Begun saving!')
 
+    Path('hyperspy/').mkdir(parents=True, exist_ok=True)
     if save_hspy:
         s.save("hyperspy/" + name + ".hspy", overwrite=True)
 
