@@ -76,12 +76,16 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True):
     saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
 
     try:
-        indium_index, vacancy_index, bulk_index = get_atom_indices(I)
-        fig = plot_standard_error_with_phonons(
-            a, indium_index, vacancy_index, bulk_index)
-        fig.savefig("hyperspy/" + name + "_error.png", dpi=200)
+        error(I, name)
     except:
         print('Did not run save standard error with FP graph')
+
+
+def error(I, name):
+    indium_index, vacancy_index, bulk_index = get_atom_indices(I)
+    fig = plot_standard_error_with_phonons(
+        I, indium_index, vacancy_index, bulk_index)
+    fig.savefig("hyperspy/" + name + "_error.png", dpi=200)
 
 
 def saveimg(filepath, fig=None):
