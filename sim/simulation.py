@@ -36,7 +36,7 @@ def make_file(output):
 
 def prismatic(file, limits, label="", PRISM=True, savepath=None,
               thermal_effects=True, total_FP=50, probestep=0.15,
-              sliceThickness=1.6218179, numGPUs=4, defocus_delta=0, tile=1):
+              sliceThickness=1.6218179, numGPUs=4, defocus_delta=0, tile=1,):
 
     file = os.path.abspath(file)
 
@@ -77,7 +77,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
             E0=300e3,
             potBound=2.0,
             probeSemiangle=alpha,
-            alphaBeamMax=alpha+4e-3,
+            alphaBeamMax=alpha+2e-3,
             interpolationFactorX=4,
             interpolationFactorY=4,
             filenameOutput=output,
@@ -95,7 +95,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
             probeDefocus=focus + defocus_delta,
             numGPUs=numGPUs,
             alsoDoCPUWork=False,
-            numThreads=10,
+            numThreads=1,
             includeThermalEffects=include_thermal_effects,
             tileX=tileX,
             tileY=tileY,
