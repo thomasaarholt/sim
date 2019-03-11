@@ -113,9 +113,6 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
 def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_positions=False):
     tqdm.write('Begun saving!')
     Path('hyperspy/').mkdir(parents=True, exist_ok=True)
-    if save_hspy:
-        s.save("hyperspy/" + corename + ".hspy", overwrite=True)
-
     for i, depth in enumerate(depths):
         name = corename + "_d" + str(depth)
         haadf_FP_series = haadf_FP_depth_series.inav[:, i]
@@ -135,6 +132,8 @@ def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_p
         if len(haadf_FP_series.axes_manager.navigation_axes):
             I, IM, PM = integrate(haadf_FP_series, add_atom_positions)
             error(I, name)
+    if save_hspy:
+        s.save("hyperspy/" + corename + ".hspy", overwrite=True)
 
 
 def read(filenames):
