@@ -42,7 +42,7 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
     depths, defoci = get_depth_and_defocus_lists(names)
     number_of_defoci = len(defoci)
     first_depth = depths[0]
-    second_depth = depths[1]
+    second_depth = depths[1] if len(depths) > 1 else first_depth + 1 # just a random number so it works
     defect_delta_Z = 1.6218179
     depth_difference = second_depth - first_depth
 
