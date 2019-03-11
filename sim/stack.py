@@ -114,6 +114,7 @@ def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_p
     tqdm.write('Begun saving!')
     Path('hyperspy/').mkdir(parents=True, exist_ok=True)
     for i, depth in enumerate(depths):
+        plt.close('all')
         name = corename + "_d" + str(depth)
         haadf_FP_series = haadf_FP_depth_series.inav[:, i]
         haadf = haadf_FP_series.mean()
