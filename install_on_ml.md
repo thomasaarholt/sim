@@ -26,6 +26,6 @@ Then:
 pip install https://github.com/prism-em/prismatic/archive/master.zip
 ```
 
-**Other commands**
+### Other commands
 ssh-copy-id -i ~/.ssh/mykey thomasaar@ml1.hpc.uio.no
 ```
