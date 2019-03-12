@@ -16,17 +16,16 @@ pip install --user https://github.com/thomasaarholt/sim/archive/master.zip
 
 ### Environment settings on Windows
 **For version without GPU:**
-You need some sort of compiler. Probably need to download and install VS Build Tools: https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2017
-Then set the following Environment Variables:
+You need some sort of compiler. You do *not* need Visual Studio, but do need to download and install VS Build Tools: https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2017. Then set the following Environment Variables:
 ```
 INCLUDE: C:\Users\thomasaar\Downloads\fftw3;C:\Users\thomasaar\Downloads\boost_1_69_0;
-LIB: C:\Users\thomasaar\Downloads\fftw3
+LIB: C:\Users\thomasaar\Downloads\fftw3;
 ```
 Then:
 ```python
 pip install https://github.com/prism-em/prismatic/archive/master.zip
 ```
 
-**Commands**
+**Other commands**
 ssh-copy-id -i ~/.ssh/mykey thomasaar@ml1.hpc.uio.no
 ```
