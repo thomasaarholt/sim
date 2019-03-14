@@ -42,7 +42,8 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
     depths, defoci = get_depth_and_defocus_lists(names)
     number_of_defoci = len(defoci)
     first_depth = depths[0]
-    second_depth = depths[1] if len(depths) > 1 else first_depth + 1 # just a random number so it works
+    # just a random number so it works
+    second_depth = depths[1] if len(depths) > 1 else first_depth + 1
     defect_delta_Z = 1.6218179
     depth_difference = second_depth - first_depth
 
@@ -107,7 +108,8 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
     haadf_FP_depth_series.axes_manager['Frozen Phonon'].offset = number_of_defoci
     haadf_FP_depth_series.axes_manager['Frozen Phonon'].scale = number_of_defoci
 
-    save2(s, haadf_FP_depth_series, corename, depths, save_hspy, add_atom_positions)
+    save2(s, haadf_FP_depth_series, corename,
+          depths, save_hspy, add_atom_positions)
 
 
 def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_positions=False):
@@ -211,17 +213,17 @@ def saveimg(filepath="image.png", fig=None):
     import matplotlib.pyplot as plt
     if not fig:
         fig = plt.gcf()
-        
-    plt.subplots_adjust(0,0,1,1,0,0)
+
+    plt.subplots_adjust(0, 0, 1, 1, 0, 0)
     for ax in fig.axes:
         if ax.aname == 'colorbar':
             continue
         ax.axis('off')
-        ax.margins(0,0)
+        ax.margins(0, 0)
         ax.xaxis.set_major_locator(plt.NullLocator())
         ax.yaxis.set_major_locator(plt.NullLocator())
-    
-    fig.savefig(filepath, pad_inches = 0, bbox_inches='tight')
+
+    fig.savefig(filepath, pad_inches=0, bbox_inches='tight')
 
 
 def colorbar(mappable):
@@ -297,3 +299,11 @@ def get_depth_and_defocus(name):
 def get_sorted_filelist(name, simulation_folder):
     filelist = glob.glob('{}/{}*'.format(simulation_folder, name))
     return sorted(filelist)
+
+
+def HAADF(left=65., right=95.):
+    return s.inav[left:right].sum(0)
+
+
+def MAADF(left=35., right=45.):
+    return s.inav[left:right].sum(0)
