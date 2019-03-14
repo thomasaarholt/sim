@@ -2,7 +2,7 @@ import atomap.api as am
 import numpy as np
 
 
-def integrate(s, add_atom_positions=True):
+def integrate(s, add_atom_positions=True, remove_edges=True):
     # x, y = am.get_atom_positions(s, int(0.75/s.axes_manager[-1].scale)).T
     image = s.sum()
     atom_positions = am.get_atom_positions(
@@ -38,10 +38,11 @@ def integrate(s, add_atom_positions=True):
     x, y = sub.atom_positions.T
     I, IM, PM = am.integrate(s.data, x, y, show_progressbar=False)
 
-    I2, IM2, PM2 = remove_integrated_edge_cells(I, IM, PM)
+    if remove_edges:
+        I, IM, PM = remove_integrated_edge_cells(I, IM, PM)
 
     # voronoi_map = am.integrate(s, x, y, show_progressbar=False)[1]
-    return I2, IM2, PM2  # voronoi_map
+    return I, IM, PM  # voronoi_map
 
 
 def _border_elems(image, pixels=1):
