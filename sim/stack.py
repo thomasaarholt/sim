@@ -301,9 +301,9 @@ def get_sorted_filelist(name, simulation_folder):
     return sorted(filelist)
 
 
-def HAADF(left=65., right=95.):
+def HAADF(s, left=65., right=95.):
     return s.inav[left:right].sum(0)
 
 
-def MAADF(left=35., right=45.):
+def MAADF(s, left=35., right=45.):
     return s.inav[left:right].sum(0)
