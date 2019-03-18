@@ -54,9 +54,9 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
 
     filename_structure = get_filename_structure(names[0])
     # depth_defocus_data = []
-    for depth in depths:
+    for depth in tqdm(depths, desc="Reading depth"):
         defocus_data = []
-        for defocus in defoci:
+        for defocus in tqdm(defoci, desc="Reading defocus"):
             filename = filename_structure.format(depth, defocus)
             filenames = get_sorted_filelist(filename, simulation_folder)
             defocus_data.append(read(filenames))
