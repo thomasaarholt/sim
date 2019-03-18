@@ -49,10 +49,9 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
 
     no_thermal_label = "_therm" if thermal_effects else "_notherm"
     algorithm = 'prism' if PRISM else 'multislice'
-
-    XMin, XMax = limits
-    YMin, YMax = limits
-
+    
+    XMin, XMax, YMin, YMax = limits
+    
     tileX = tileY = tile
 
     random_filename = os.path.join(savepath, name + label + '_random.txt')

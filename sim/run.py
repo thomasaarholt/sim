@@ -18,9 +18,9 @@ sigma, defocus_list, weighting_list = get_series_defocus_and_weight(
 for filename in files:
     for i, defocus_delta in enumerate(defocus_list):
         prismatic(
-            filename, label="_defocus_"+str(i), limits=({0}, {1}),
-            PRISM=True, savepath='prism', thermal_effects=True,
-            total_FP=30, sliceThickness=0.8109, defocus_delta=defocus_delta)
+            filename, label="_defocus_"+str(i), limits=(0.46, 0.54, 0.45, 0.565),
+            PRISM=False, savepath=None, thermal_effects=True,
+            total_FP=1, sliceThickness=0.8109, defocus_delta=defocus_delta)
 
         # prismatic(
         #     filename, label="_defocus_"+str(i), limits=({0}, {1}), 

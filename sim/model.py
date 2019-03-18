@@ -110,7 +110,7 @@ def create_cube(
               path=model_path, only_save='multem', temperature=temperature)
     save_cell(cell=multem_cell, name=multem_cell.info['name'],
               path=model_path, only_save='xyz', temperature=temperature)
-
+    return model
 
 def make_super(
         sidelength=3, defect_type='relaxed', main_path="",
