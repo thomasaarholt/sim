@@ -65,7 +65,7 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
         s = hs.signals.Signal2D(data)
         s = s.as_signal2D((0, -1))
 
-        s = s*weighting_list[:, None, None, None] / \
+        s = s*weighting_list[:, None, None, None, None] / \
             weighting_list.sum() * number_of_defoci
 
         defocus_offset = defocus_list[0]
