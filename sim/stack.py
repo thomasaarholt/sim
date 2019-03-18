@@ -108,9 +108,10 @@ def save3(s, name, add_atom_positions):
     plt.close('all')
     Path('hyperspy/').mkdir(parents=True, exist_ok=True)
     number_of_defoci = s.axes_manager['Defocus Series'].size
-    haadf = HAADF(s).mean(1)  # sum over mrad, mean over defocus
-    haadf.axes_manager['Frozen Phonon'].offset = number_of_defoci
-    haadf.axes_manager['Frozen Phonon'].scale = number_of_defoci
+    haadf_FP = HAADF(s).mean(1)  # sum over mrad, mean over defocus
+    haadf_FP.axes_manager['Frozen Phonon'].offset = number_of_defoci
+    haadf_FP.axes_manager['Frozen Phonon'].scale = number_of_defoci
+    haadf = haadf_FP.mean(0)
 
     fig, ax = plt.subplots(dpi=200)
     im = ax.imshow(haadf.data)
@@ -122,8 +123,11 @@ def save3(s, name, add_atom_positions):
     im2 = ax.imshow(IM.data)
     colorbar(im2)
     saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
-    
     s.save("hyperspy/" + name + ".hspy", overwrite=True)
+    
+    if len(haadf_FP.axes_manager.navigation_axes):
+        I, IM, PM = integrate(haadf_FP, add_atom_positions)
+        error(I, name)
 
 def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_positions=False):
     tqdm.write('Begun saving!')
