@@ -131,14 +131,14 @@ def save3(s, name, add_atom_positions):
     tqdm.write('\t' + 'Saving hspy file', end="")
     t = time()
     s.save("hyperspy/" + name + ".hspy", overwrite=True)
-    tqdm.write('...ok, took {} seconds'.format(t - time()))
+    tqdm.write('...ok, took {} seconds'.format(time() - t))
     
     if len(haadf_FP.axes_manager.navigation_axes):
         tqdm.write('\t' + 'Calculating error', end="")
         t = time()
         I, IM, PM = integrate(haadf_FP, add_atom_positions)
         error(I, name)
-        tqdm.write('...ok, took {} seconds'.format(t - time()))
+        tqdm.write('...ok, took {} seconds'.format(time() - t))
 
 def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_positions=False):
     tqdm.write('Begun saving!')
