@@ -9,6 +9,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import glob
 from pathlib import Path
 from tqdm.auto import tqdm
+from time import time
 print('')
 print('')
 print('')
@@ -127,16 +128,17 @@ def save3(s, name, add_atom_positions):
     im2 = ax.imshow(IM.data)
     colorbar(im2)
     saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
-
     tqdm.write('\t' + 'Saving hspy file', end="")
+    t = time()
     s.save("hyperspy/" + name + ".hspy", overwrite=True)
-    tqdm.write('...ok')
+    tqdm.write('...ok, took {} seconds'.format(t - time()))
     
     if len(haadf_FP.axes_manager.navigation_axes):
         tqdm.write('\t' + 'Calculating error', end="")
+        t = time()
         I, IM, PM = integrate(haadf_FP, add_atom_positions)
         error(I, name)
-        tqdm.write('...ok')
+        tqdm.write('...ok, took {} seconds'.format(t - time()))
 
 def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_positions=False):
     tqdm.write('Begun saving!')
