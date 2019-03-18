@@ -53,64 +53,77 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
     weighting_list = np.array(weighting_list)[:number_of_defoci]
 
     filename_structure = get_filename_structure(names[0])
-    depth_defocus_data = []
+    # depth_defocus_data = []
     for depth in depths:
         defocus_data = []
         for defocus in defoci:
             filename = filename_structure.format(depth, defocus)
             filenames = get_sorted_filelist(filename, simulation_folder)
             defocus_data.append(read(filenames))
-        depth_defocus_data.append(defocus_data)
-    data = np.asarray(depth_defocus_data)
+        data = np.asarray(defocus_data)
 
-    s = hs.signals.Signal2D(data)
-    s = s.as_signal2D((0, -1))
+        s = hs.signals.Signal2D(data)
+        s = s.as_signal2D((0, -1))
 
-    s = s*weighting_list[:, None, None, None, None] / \
-        weighting_list.sum() * number_of_defoci
+        s = s*weighting_list[:, None, None, None] / \
+            weighting_list.sum() * number_of_defoci
 
-    defocus_offset = defocus_list[0]
-    defocus_scale = defocus_list[1] - defocus_list[0]
+        defocus_offset = defocus_list[0]
+        defocus_scale = defocus_list[1] - defocus_list[0]
 
-    s.metadata.add_node('Simulation')
-    s.metadata.Simulation.Software = simulation_folder
+        s.metadata.add_node('Simulation')
+        s.metadata.Simulation.Software = simulation_folder
 
-    s.axes_manager[0].name = 'Acceptance Angle'
-    s.axes_manager[0].units = 'mrad'
-    s.axes_manager[0].offset = 0
-    s.axes_manager[0].scale = 1
+        s.axes_manager[0].name = 'Acceptance Angle'
+        s.axes_manager[0].units = 'mrad'
+        s.axes_manager[0].offset = 0
+        s.axes_manager[0].scale = 1
 
-    s.axes_manager[1].name = 'Frozen Phonon'
-    s.axes_manager[1].units = ''
-    s.axes_manager[1].offset = 0
-    s.axes_manager[1].scale = 1
+        s.axes_manager[1].name = 'Frozen Phonon'
+        s.axes_manager[1].units = ''
+        s.axes_manager[1].offset = 0
+        s.axes_manager[1].scale = 1
 
-    s.axes_manager[2].name = 'Defocus Series'
-    s.axes_manager[2].units = 'Å'
-    s.axes_manager[2].offset = defocus_offset
-    s.axes_manager[2].scale = defocus_scale
+        s.axes_manager[2].name = 'Defocus Series'
+        s.axes_manager[2].units = 'Å'
+        s.axes_manager[2].offset = defocus_offset
+        s.axes_manager[2].scale = defocus_scale
 
-    s.axes_manager[3].name = 'Defect Depth Position'
-    s.axes_manager[3].units = 'Å'
-    s.axes_manager[3].offset = first_depth*defect_delta_Z
-    s.axes_manager[3].scale = defect_delta_Z*depth_difference
+        # s.axes_manager[3].name = 'Defect Depth Position'
+        # s.axes_manager[3].units = 'Å'
+        # s.axes_manager[3].offset = first_depth*defect_delta_Z
+        # s.axes_manager[3].scale = defect_delta_Z*depth_difference
 
-    s.axes_manager[-2].name = 'X-Axis'
-    s.axes_manager[-2].scale = 0.15
-    s.axes_manager[-2].units = 'Å'
+        s.axes_manager[-2].name = 'X-Axis'
+        s.axes_manager[-2].scale = 0.15
+        s.axes_manager[-2].units = 'Å'
 
-    s.axes_manager[-1].name = 'Y-Axis'
-    s.axes_manager[-1].scale = 0.15
-    s.axes_manager[-1].units = 'Å'
+        s.axes_manager[-1].name = 'Y-Axis'
+        s.axes_manager[-1].scale = 0.15
+        s.axes_manager[-1].units = 'Å'     
 
-    haadf_FP_depth_series = s.inav[40.:].sum(0).mean(
-        1)  # sum over mrad, mean over defocus
-    haadf_FP_depth_series.axes_manager['Frozen Phonon'].offset = number_of_defoci
-    haadf_FP_depth_series.axes_manager['Frozen Phonon'].scale = number_of_defoci
+        save3(s, corename + "_d{:02}".format(depth), add_atom_positions)
 
-    save2(s, haadf_FP_depth_series, corename,
-          depths, save_hspy, add_atom_positions)
+def save3(s, name, add_atom_positions):
+    plt.close('all')
+    Path('hyperspy/').mkdir(parents=True, exist_ok=True)
+    number_of_defoci = s.axes_manager['Defocus Series'].size
+    haadf = HAADF(s).mean(1)  # sum over mrad, mean over defocus
+    haadf.axes_manager['Frozen Phonon'].offset = number_of_defoci
+    haadf.axes_manager['Frozen Phonon'].scale = number_of_defoci
 
+    fig, ax = plt.subplots(dpi=200)
+    im = ax.imshow(haadf.data)
+    colorbar(im)
+    saveimg("hyperspy/" + name + "_HAADF.png", fig=fig)
+
+    I, IM, PM = integrate(haadf, add_atom_positions)
+    fig2, ax = plt.subplots(dpi=200)
+    im2 = ax.imshow(IM.data)
+    colorbar(im2)
+    saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
+    
+    s.save("hyperspy/" + name + ".hspy", overwrite=True)
 
 def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_positions=False):
     tqdm.write('Begun saving!')
