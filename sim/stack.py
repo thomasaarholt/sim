@@ -251,7 +251,7 @@ def saveimg(filepath="image.png", fig=None):
         ax.xaxis.set_major_locator(plt.NullLocator())
         ax.yaxis.set_major_locator(plt.NullLocator())
 
-    fig.savefig(filepath, pad_inches=0, bbox_inches='tight')
+    fig.savefig(filepath, pad_inches=0, bbox_inches='tight', dpi=200)
 
 
 def colorbar(mappable):
