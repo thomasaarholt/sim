@@ -10,10 +10,6 @@ import glob
 from pathlib import Path
 from tqdm.auto import tqdm
 from time import time
-print('')
-print('')
-print('')
-
 
 def stack_and_save_old(simulation_folder='prism', add_atom_positions=False, save_hspy=True):
     plt.close('all')
