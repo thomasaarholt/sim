@@ -54,3 +54,21 @@ def plot_roi(cell, roi, probestep=0.15):
     xy = get_bottom_left_corner(roi, img)
     height, width = _get_roi_height_width(roi, img)
     _plot_roi(img, xy, height, width)
+
+def annotate(ax):
+    ax.annotate("In$_{Zn}$",
+                  xy=(87.5+2, 70+2), xycoords='data',
+                  xytext=(87+20, 120), textcoords='data',
+                  size=20, va="center", ha="center",
+                  bbox=dict(boxstyle="round4", fc="lightgrey"),
+                  arrowprops=dict(
+                                  fc="red"), 
+                  )
+    ax.annotate("V$_{Zn}$",
+                  xy=(69-2, 69.2-2), xycoords='data',
+                  xytext=(68.7-20, 20), textcoords='data',
+                  size=20, va="center", ha="center",
+                  bbox=dict(boxstyle="round4", fc="lightgrey"),
+                  arrowprops=dict(
+                                  fc="red"), 
+                  )
