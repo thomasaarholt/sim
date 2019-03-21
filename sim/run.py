@@ -20,7 +20,8 @@ for filename in files:
         prismatic(
             filename, label="_defocus_"+str(i), limits=({0}, {1}),
             PRISM=True, savepath='prism', thermal_effects=True,
-            total_FP=30, sliceThickness=0.8109, defocus_delta=defocus_delta)
+            total_FP=100, sliceThickness=0.8109, probestep=0.08,
+            C3=10000, defocus_delta=defocus_delta)
 
         # prismatic(
         #     filename, label="_defocus_"+str(i), limits=({0}, {1}), 

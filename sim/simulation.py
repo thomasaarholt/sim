@@ -6,6 +6,7 @@ import random
 from pathlib import Path
 from time import time
 import numpy as np
+from sim.model import relativistic_wavelength
 
 
 def make_file(output):
@@ -36,7 +37,8 @@ def make_file(output):
 
 def prismatic(file, limits, label="", PRISM=True, savepath=None,
               thermal_effects=True, total_FP=50, probestep=0.15,
-              sliceThickness=1.6218179, numGPUs=4, defocus_delta=0, tile=1,):
+              sliceThickness=1.6218179, numGPUs=4, defocus_delta=0, 
+              C3=0, tile=1,):
 
     file = os.path.abspath(file)
 
@@ -65,7 +67,8 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
         potential_spacing = 0.05  # Å
         include_thermal_effects = thermal_effects
         alpha = 20.0e-3
-        focus = 0
+        E0 = 300e3
+        focus = scherzer_defocus(kV=E0/1000, Cs_mm=C3/10000)*1e10
 
         random_number = random.randint(0, 100000)
         with open(random_filename, 'a') as f:
@@ -73,7 +76,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
         meta = pr.Metadata(
             filenameAtoms=file,
             algorithm=algorithm,
-            E0=300e3,
+            E0=E0,
             potBound=2.0,
             probeSemiangle=alpha,
             alphaBeamMax=alpha+2e-3,
@@ -103,6 +106,7 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
             randomSeed=random_number,
             numStreamsPerGPU=3,
             batchSizeTargetGPU=1,
+            C3=C3,
         )
         while make_file(output):
             t1 = time()
@@ -188,3 +192,13 @@ def prismatic2(file, limits, label="", PRISM=True, savepath=None,
             t2 = time()
             display('It took {:.2f} minutes, or {:.2f} hours'.format(
                 (t2 - t1)/60, (t2 - t1)/3600))
+
+
+def scherzer_defocus(kV=300, Cs_mm=0.001, nD=1):
+    '''nD is the nth defocus, should start with 1, 
+    from Kirkland page 33
+    '''
+    import numpy as np
+    Cs = 1e-3*Cs_mm
+    defocus = -np.sqrt((2*nD - 0.5)*Cs*relativistic_wavelength(kV))
+    return defocus
