@@ -62,7 +62,6 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
             savepath, name + label + no_thermal_label +
             '_FP{:03d}.mrc'.format(FP_number))
 
-        probestep = 0.15  # Å
         potential_spacing = 0.05  # Å
         include_thermal_effects = thermal_effects
         alpha = 20.0e-3
