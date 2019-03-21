@@ -36,8 +36,9 @@ def get_atom_indices(integrated_list):
 
 
 def plot_standard_error_with_phonons(
-        integrated_list, indium_index=27, vacancy_index=28, bulk_index=20):
-    fig = plt.figure()
+        integrated_list, indium_index=27, vacancy_index=28, bulk_index=20, fig=None):
+    if not fig:
+        fig = plt.figure()
 
     axis, means, std = mean_and_std_error(integrated_list[indium_index])
     plt.errorbar(axis-0.1, means, std, fmt='', color='red',

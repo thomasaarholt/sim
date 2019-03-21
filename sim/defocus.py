@@ -26,14 +26,15 @@ def get_series_defocus_and_weight(ZLP=0.9, Voltage=3e5, Chromatic=1.6e-3):
     return sigma, defocus, weighting
 
 
-def plot_defocus_distribution(sigma, defocus, weighting):
+def plot_defocus_distribution(sigma, defocus, weighting, fig=None):
     'Plot '
     x = np.linspace(-4*sigma, +4*sigma, 1000)
     mu = 0
     gauss = gaussian(x, mu, sigma)
-
-    fig, ax = plt.subplots()
-    ax.plot(x, gauss, color='grey', zorder=-1, lw=4)
+    if not fig:
+        fig, ax = plt.subplots()
+    plt.plot(x, gauss, color='grey', zorder=-1, lw=4)
+    ax = plt.gca()
     plt.fill_between(x, gauss, color='lightgrey')
 
     defocus = np.array([-2*sigma, -sigma, 0, sigma, 2*sigma])
@@ -47,3 +48,4 @@ def plot_defocus_distribution(sigma, defocus, weighting):
     axes_coords = ax.transAxes.inverted().transform(figure_coords).T[1]
     for x0, ymax in zip(defocus, axes_coords):
         plt.axvline(x0, ymax=ymax, ls='--', color='green')
+    return fig
