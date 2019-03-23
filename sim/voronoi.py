@@ -91,9 +91,6 @@ def integrate(s, use_two_central_positions=True, remove_edges=True):
         atom_positions = am.get_atom_positions(
             image, int(0.75/s.axes_manager[-1].scale))
 
-        # the following were added for this specific dataset,
-        # using the gui tool in atomap
-
         sub = am.Sublattice(atom_positions, image)
         sub.find_nearest_neighbors()
         sub.refine_atom_positions_using_center_of_mass(show_progressbar=False)
