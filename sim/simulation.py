@@ -68,7 +68,8 @@ def prismatic(file, limits, label="", PRISM=True, savepath=None,
         include_thermal_effects = thermal_effects
         alpha = 20.0e-3
         E0 = 300e3
-        focus = -scherzer_defocus(kV=E0/1000, Cs_mm=C3/10000)*1e10
+        C3_mm = Å_to_mm(C3)
+        focus = scherzer_defocus(kV=E0/1000, Cs_mm=C3_mm)*1e10
 
         random_number = random.randint(0, 100000)
         with open(random_filename, 'a') as f:
@@ -202,3 +203,6 @@ def scherzer_defocus(kV=300, Cs_mm=0.001, nD=1):
     Cs = 1e-3*Cs_mm
     defocus = -np.sqrt((2*nD - 0.5)*Cs*relativistic_wavelength(kV))
     return defocus
+
+def Å_to_mm(Å):
+    return Å /( 10*1000*1000)
