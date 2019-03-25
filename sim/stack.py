@@ -62,7 +62,7 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
         defocus_data = []
         for defocus in tqdm(defoci, desc="Reading defocus"):
             filename = filename_structure.format(depth, defocus)
-            filenames = get_sorted_filelist(filename, simulation_folder)
+            filenames = get_first_fifty(get_sorted_filelist(filename, simulation_folder))
             defocus_data.append(read(filenames))
         data = np.asarray(defocus_data, dtype="float32")
 
@@ -330,6 +330,10 @@ def get_depth_and_defocus(name):
 def get_sorted_filelist(name, simulation_folder):
     filelist = glob.glob('{}/{}*'.format(simulation_folder, name))
     return sorted(filelist)
+
+
+def get_first_fifty(filelist):
+    return filelist[:50]
 
 
 def HAADF(s, left=65., right=95.):
