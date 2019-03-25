@@ -64,7 +64,7 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
             filename = filename_structure.format(depth, defocus)
             filenames = get_sorted_filelist(filename, simulation_folder)
             defocus_data.append(read(filenames))
-        data = np.asarray(defocus_data)
+        data = np.asarray(defocus_data, dtype="float32")
 
         s = hs.signals.Signal2D(data)
         s = s.as_signal2D((0, -1))
@@ -104,9 +104,10 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
 
         s.axes_manager[-1].name = 'Y-Axis'
         s.axes_manager[-1].scale = 0.15
-        s.axes_manager[-1].units = 'Å'     
+        s.axes_manager[-1].units = 'Å'
 
         save3(s, corename + "_d{:02}".format(depth), add_atom_positions)
+
 
 def save3(s, name, add_atom_positions=False):
     tqdm.write("Saving {}".format(name))
@@ -132,13 +133,14 @@ def save3(s, name, add_atom_positions=False):
     t = time()
     s.save("hyperspy/" + name + ".hspy", overwrite=True)
     tqdm.write('...ok, took {} seconds'.format(time() - t))
-    
+
     if len(haadf_FP.axes_manager.navigation_axes):
         tqdm.write('\t' + 'Calculating error', end="")
         t = time()
         I, IM, PM = integrate(haadf_FP, add_atom_positions)
         error(I, name)
         tqdm.write('...ok, took {} seconds'.format(time() - t))
+
 
 def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_positions=False):
     tqdm.write('Begun saving!')
@@ -171,7 +173,7 @@ def read(filenames):
     data = []
     for filename in filenames:
         if filename.endswith('.mrc'):
-            data.append(readMRC(filename))
+            data.append(readMRC(filename).astype("float32"))
     return np.asarray(data)
 
 
