@@ -54,7 +54,7 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
     sigma, defocus_list, weighting_list = get_series_defocus_and_weight(
         ZLP=0.9, Voltage=3e5, Chromatic=1.6e-3)
     # indexing just for testing, harmless
-    weighting_list = np.array(weighting_list)[:number_of_defoci]
+    weighting_list = np.array(weighting_list, dtype='float32')[:number_of_defoci]
 
     filename_structure = get_filename_structure(names[0])
     # depth_defocus_data = []
@@ -68,9 +68,9 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
 
         s = hs.signals.Signal2D(data)
         s = s.as_signal2D((0, -1))
+        print(3, s.data.dtype)
 
-        s = s*weighting_list[:, None, None, None, None] / \
-            weighting_list.sum() * number_of_defoci
+        s = s*weighting_list[:, None, None, None, None] / weighting_list.sum() * number_of_defoci
 
         defocus_offset = defocus_list[0]
         defocus_scale = defocus_list[1] - defocus_list[0]
@@ -105,8 +105,9 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
         s.axes_manager[-1].name = 'Y-Axis'
         s.axes_manager[-1].scale = 0.15
         s.axes_manager[-1].units = 'Å'
+        print('last', s.data.dtype)
 
-        save3(s, corename + "_d{:02}".format(depth), add_atom_positions)
+        #save3(s, corename + "_d{:02}".format(depth), add_atom_positions)
 
 
 def save3(s, name, add_atom_positions=False):
@@ -171,10 +172,14 @@ def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_p
 
 def read(filenames):
     data = []
-    for filename in filenames:
+    for filename in filenames[:2]:
         if filename.endswith('.mrc'):
-            data.append(readMRC(filename).astype("float32"))
-    return np.asarray(data)
+            d = readMRC(filename).astype("float32")
+            data.append(d)
+            print(d.dtype)
+    data = np.asarray(data)
+    print(data.dtype)
+    return data
 
 
 def save(files, name, simulation_folder='prism', add_atom_positions=True, save_hspy=True):
