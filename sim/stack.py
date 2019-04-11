@@ -10,12 +10,11 @@ import glob
 from pathlib import Path
 from tqdm.auto import tqdm
 from time import time
-print('')
-print('')
-print('')
 
 
-def stack_and_save_old(simulation_folder='prism', add_atom_positions=False, save_hspy=True):
+def stack_and_save_old(
+        simulation_folder='prism',
+        add_atom_positions=False, save_hspy=True):
     plt.close('all')
     names = set([
         f.stem.split('_FP')[0] for f in
@@ -31,7 +30,9 @@ def stack_and_save_old(simulation_folder='prism', add_atom_positions=False, save
              add_atom_positions, save_hspy=save_hspy)
 
 
-def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hspy=True):
+def stack_and_save(
+        simulation_folder='prism',
+        add_atom_positions=False, save_hspy=True):
     plt.close('all')
 
     sim_folder = Path("{}/".format(simulation_folder))
@@ -39,22 +40,23 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
     names = sorted(set([get_stem(f) for f in sim_folder]))
 
     temperature = "RT" if "RT" in names[0] else "LN2"
-    state = "DFT" if "DFT" in names[0] else "noDFT"
+    state = "noDFT" if "noDFT" in names[0] else "DFT"
     firstpartname = names[0].split("_d")[0]
     corename = firstpartname + "_" + state + "_" + temperature
 
     depths, defoci = get_depth_and_defocus_lists(names)
     number_of_defoci = len(defoci)
-    first_depth = depths[0]
+    # first_depth = depths[0]
     # just a random number so it works
-    second_depth = depths[1] if len(depths) > 1 else first_depth + 1
-    defect_delta_Z = 1.6218179
-    depth_difference = second_depth - first_depth
+    # second_depth = depths[1] if len(depths) > 1 else first_depth + 1
+    # defect_delta_Z = 1.6218179
+    # depth_difference = second_depth - first_depth
 
     sigma, defocus_list, weighting_list = get_series_defocus_and_weight(
         ZLP=0.9, Voltage=3e5, Chromatic=1.6e-3)
     # indexing just for testing, harmless
-    weighting_list = np.array(weighting_list, dtype='float32')[:number_of_defoci]
+    weighting_list = np.array(weighting_list, dtype='float32')[
+        :number_of_defoci]
 
     filename_structure = get_filename_structure(names[0])
     # depth_defocus_data = []
@@ -62,14 +64,16 @@ def stack_and_save(simulation_folder='prism', add_atom_positions=False, save_hsp
         defocus_data = []
         for defocus in tqdm(defoci, desc="Reading defocus"):
             filename = filename_structure.format(depth, defocus)
-            filenames = get_first_fifty(get_sorted_filelist(filename, simulation_folder))
+            filenames = get_first_fifty(
+                get_sorted_filelist(filename, simulation_folder))
             defocus_data.append(read(filenames))
         data = np.asarray(defocus_data, dtype="float32")
 
         s = hs.signals.Signal2D(data)
         s = s.as_signal2D((0, -1))
 
-        s = s*weighting_list[:, None, None, None, None] / weighting_list.sum() * number_of_defoci
+        s = s*weighting_list[:, None, None, None, None] / \
+            weighting_list.sum() * number_of_defoci
 
         defocus_offset = defocus_list[0]
         defocus_scale = defocus_list[1] - defocus_list[0]
@@ -141,7 +145,9 @@ def save3(s, name, add_atom_positions=False):
         tqdm.write('...ok, took {} seconds'.format(time() - t))
 
 
-def save2(s, haadf_FP_depth_series, corename, depths, save_hspy=True, add_atom_positions=False):
+def save2(
+        s, haadf_FP_depth_series, corename,
+        depths, save_hspy=True, add_atom_positions=False):
     tqdm.write('Begun saving!')
     Path('hyperspy/').mkdir(parents=True, exist_ok=True)
     for i, depth in enumerate(depths):
@@ -178,7 +184,9 @@ def read(filenames):
     return data
 
 
-def save(files, name, simulation_folder='prism', add_atom_positions=True, save_hspy=True):
+def save(
+        files, name, simulation_folder='prism',
+        add_atom_positions=True, save_hspy=True):
     if files[0].endswith('.mrc'):
         s = hs.signals.Signal2D(read(files)).as_signal2D((0, -1))
         s.metadata.add_node('Simulation')
@@ -216,12 +224,12 @@ def save(files, name, simulation_folder='prism', add_atom_positions=True, save_h
         s.save("hyperspy/" + name + ".hspy", overwrite=True)
 
     fig, ax = plt.subplots(dpi=200)
-    im = ax.imshow(haadf.data)
+    ax.imshow(haadf.data)
     saveimg("hyperspy/" + name + "_HAADF_sum.png", fig=fig)
 
     I, IM, PM = integrate(haadf, add_atom_positions)
     fig2, ax = plt.subplots(dpi=200)
-    im2 = ax.imshow(IM.data)
+    ax.imshow(IM.data)
     saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
 
     if len(haadf_series.axes_manager.navigation_axes):
@@ -316,10 +324,10 @@ def get_depth_and_defocus(name):
     A, B = name.split(keyright)
     first, AB = A.split(keyleft)
     ABS = AB.split('_')
-    second = "_" + "_".join(ABS[1:])
+    # second = "_" + "_".join(ABS[1:])
 
     BS = B.split('_')
-    rest = "_" + "_".join(BS[1:])
+    # rest = "_" + "_".join(BS[1:])
 
     depth = int(ABS[0])
     defocus = int(BS[0])

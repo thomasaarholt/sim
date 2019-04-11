@@ -1,8 +1,9 @@
 import numpy as np
-from ase.visualize import view
 from sim.cp import copy_file
 from pathlib import Path
 import os
+from ase.build import stack
+from tqdm.auto import tqdm
 
 
 def central_XY(central_fraction, sidelength):
@@ -188,6 +189,98 @@ def load_defect_bulk(defect_type, name):
     defect = rotate90(defect)
 
     return defect, bulk, name
+
+
+def lateral_stack(defect, sidelength=7):
+    dim1_defect = defect.copy()
+    dim1_bulk = bulk.copy()
+    for i in range(int((sidelength-1)/2)):
+        dim1_defect = stack(dim1_defect, bulk, axis=0)
+        dim1_defect = stack(bulk, dim1_defect, axis=0)
+        dim1_bulk = stack(dim1_bulk, bulk, axis=0)
+        dim1_bulk = stack(bulk, dim1_bulk, axis=0)
+
+    dim2_defect = dim1_defect.copy()
+    dim2_bulk = dim1_bulk.copy()
+
+    for i in range(int((sidelength-1)/2)):
+        dim2_defect = stack(dim2_defect, dim1_bulk, axis=1)
+        dim2_defect = stack(dim1_bulk, dim2_defect, axis=1)
+        dim2_bulk = stack(dim2_bulk, dim1_bulk, axis=1)
+        dim2_bulk = stack(dim1_bulk, dim2_bulk, axis=1)
+
+    return dim2_defect
+
+
+def In_index(cell):
+    return np.where(cell.numbers == 49)[0][0]
+
+
+def In_Z_pos(cell):
+    return cell.positions[In_index(cell)][-1]
+
+
+def get_indices_of_atoms_outside_cell(cell):
+    indices = [
+        atom.index for atom in cell if (atom.position < [0, 0, 0]).any()
+        or (atom.position >= cell.cell.diagonal() + [0, 0, 0]).any()]
+    return indices
+
+
+def delete_atoms_outside_cell(cell):
+    del cell[get_indices_of_atoms_outside_cell(cell)]
+
+
+def corrected_defect_by_stacking(
+        path, sidelength,
+        defect_type='relaxed', temperature='RT'):
+    '''Much shorter version designed for indium-vacancy paper
+    This is the version to use, as of April 2019
+    '''
+    defect, bulk, _ = load_defect_bulk(defect_type, "test")
+
+    if defect_type == 'static':
+        state = 'noDFT'
+    elif defect_type == 'relaxed':
+        state = 'DFT'
+    elif defect_type == 'bulk':
+        state = 'Bulk'
+
+    In_to_In_thickness = defect.cell.diagonal()[-1]/3
+    final_thickness = defect.cell.diagonal()[-1]*3 + 1*In_to_In_thickness
+
+    lateraldefect = lateral_stack(defect, sidelength)
+    lateralbulk = lateral_stack(bulk, sidelength)
+    Orig_In_Z_pos = In_Z_pos(lateraldefect)
+
+    cell = lateraldefect.copy()
+
+    for i in range(5):
+        cell = stack(cell, lateralbulk)
+    for i in range(5):
+        cell = stack(lateralbulk, cell)
+
+    New_InZ_pos = In_Z_pos(cell)
+    shift = New_InZ_pos - Orig_In_Z_pos
+    cell.positions[:, -1] -= shift
+
+    cells = []
+    for i in range(7):
+        cell.cell[2, 2] = final_thickness
+        cells.append(cell.copy())
+        cell.positions[:, -1] += In_to_In_thickness
+
+    for i, c in tqdm(enumerate(cells), total=len(cells)):
+        c.positions += 0.001  # necessary to avoid edge effects due to floating point error
+        delete_atoms_outside_cell(c)
+        c.positions -= 0.001
+        prismatic_equivalent_depth_position = 15 - 2*i
+        final_depth = 20  # not necessary any longer
+        name =  'ZnO_xy'+str(sidelength)+'_z'+str(final_depth) + \
+                '_d'+str(prismatic_equivalent_depth_position) + \
+                '_rev' + "_" + state
+        save_cell(c, name, path, temperature=temperature,
+                  only_save='prismatic')
 
 
 def create_defect_by_stacking(defect_depth_position, sidelength, final_depth, defect_type='relaxed', final_sidelength=None):
@@ -517,7 +610,7 @@ def save_cell_multem(bigcell, name, path="", temperature='RT'):
 
 
 def save_cell_multem_txt(bigcell, name, path="", temperature='RT'):
-    #raise Exception('This needs to be updated for debye waller factors')
+    # raise Exception('This needs to be updated for debye waller factors')
     import os
     import numpy as np
 
@@ -556,7 +649,7 @@ def save_cell_multem_txt(bigcell, name, path="", temperature='RT'):
             rms3d in zip(bigcell.numbers, bigcell.positions, rms3d_list)]
 
     total = np.array(header + data)
-    #total = [item for sublist in total for item in sublist]
+    # total = [item for sublist in total for item in sublist]
 
     np.savetxt(path + name + ".txt", total,
                fmt='%.8f', newline="\n", delimiter=" ")
