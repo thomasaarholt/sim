@@ -350,3 +350,7 @@ def HAADF(s, left=65., right=95.):
 
 def MAADF(s, left=35., right=45.):
     return s.inav[left:right].sum(0)
+
+
+def mean_FP_focus(s):
+    return s.mean(axis=['Frozen Phonon', 'Defocus Series'])
