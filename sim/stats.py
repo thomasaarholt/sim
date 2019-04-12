@@ -51,6 +51,7 @@ def plot_standard_error_with_phonons(
     axis, means, std = mean_and_std_error(integrated_list[vacancy_index])
     plt.errorbar(axis+0.1, means, std, fmt='', color='black',
                  ecolor='lightgray', elinewidth=3, capsize=0, label='Vacancy')
+    plt.title('Column intensity with increasing number of phonons')
     plt.xlabel('Averaged number of frozen phonons')
     plt.ylabel('Voronoi Intensity')
     plt.legend()
