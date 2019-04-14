@@ -64,8 +64,7 @@ def stack_and_save(
         defocus_data = []
         for defocus in tqdm(defoci, desc="Reading defocus"):
             filename = filename_structure.format(depth, defocus)
-            filenames = get_first_fifty(
-                get_sorted_filelist(filename, simulation_folder))
+            filenames = get_sorted_filelist(filename, simulation_folder)
             defocus_data.append(read(filenames))
         data = np.asarray(defocus_data, dtype="float32")
 
