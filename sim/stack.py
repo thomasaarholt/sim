@@ -67,9 +67,12 @@ def stack_and_save(
             filenames = get_first_N(get_sorted_filelist(filename, simulation_folder), 100)
             defocus_data.append(read(filenames))
         data = np.asarray(defocus_data, dtype="float32")
+        defocus_data = None
 
         s = hs.signals.Signal2D(data)
+        data = None
         s = s.as_signal2D((0, -1))
+        gc.collect()
 
         s = s*weighting_list[:, None, None, None, None] / \
             weighting_list.sum() * number_of_defoci
@@ -109,8 +112,6 @@ def stack_and_save(
         s.axes_manager[-1].units = 'Å'
 
         save3(s, corename + "_d{:02}".format(depth), add_atom_positions)
-        defocus_data = None
-        data = None
         s = None
         gc.collect()
 
