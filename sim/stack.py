@@ -10,7 +10,7 @@ import glob
 from pathlib import Path
 from tqdm.auto import tqdm
 from time import time
-
+import gc
 
 def stack_and_save_old(
         simulation_folder='prism',
@@ -109,6 +109,10 @@ def stack_and_save(
         s.axes_manager[-1].units = 'Å'
 
         save3(s, corename + "_d{:02}".format(depth), add_atom_positions)
+        defocus_data = None
+        data = None
+        s = None
+        gc.collect()
 
 
 def save3(s, name, add_atom_positions=False):
