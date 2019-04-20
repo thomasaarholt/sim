@@ -64,7 +64,7 @@ def stack_and_save(
         defocus_data = []
         for defocus in tqdm(defoci, desc="Reading defocus"):
             filename = filename_structure.format(depth, defocus)
-            filenames = get_sorted_filelist(filename, simulation_folder)
+            filenames = get_first_N(get_sorted_filelist(filename, simulation_folder), 80)
             defocus_data.append(read(filenames))
         data = np.asarray(defocus_data, dtype="float32")
 
@@ -339,8 +339,8 @@ def get_sorted_filelist(name, simulation_folder):
     return sorted(filelist)
 
 
-def get_first_fifty(filelist):
-    return filelist[:50]
+def get_first_N(filelist, N=80):
+    return filelist[:N]
 
 
 def HAADF(s, left=65., right=95.):
