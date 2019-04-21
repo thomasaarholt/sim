@@ -111,12 +111,12 @@ def stack_and_save(
         s.axes_manager[-1].scale = 0.15
         s.axes_manager[-1].units = 'Å'
 
-        save3(s, corename + "_d{:02}".format(depth), add_atom_positions)
+        save3(s, corename + "_d{:02}".format(depth))
         s = None
         gc.collect()
 
 
-def save3(s, name, add_atom_positions=False):
+def save3(s, name):
     tqdm.write("Saving {}".format(name))
     plt.close('all')
     Path('hyperspy/').mkdir(parents=True, exist_ok=True)
@@ -131,7 +131,7 @@ def save3(s, name, add_atom_positions=False):
     colorbar(im)
     saveimg("hyperspy/" + name + "_HAADF.png", fig=fig)
 
-    I, IM, PM = integrate(haadf, add_atom_positions)
+    I, IM, PM = integrate(haadf)
     fig2, ax = plt.subplots(dpi=200)
     im2 = ax.imshow(IM.data)
     colorbar(im2)
@@ -144,7 +144,7 @@ def save3(s, name, add_atom_positions=False):
     if len(haadf_FP.axes_manager.navigation_axes):
         tqdm.write('\t' + 'Calculating error', end="")
         t = time()
-        I, IM, PM = integrate(haadf_FP, add_atom_positions)
+        I, IM, PM = integrate(haadf_FP)
         error(I, name)
         tqdm.write('...ok, took {} seconds'.format(time() - t))
 
