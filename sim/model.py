@@ -545,14 +545,17 @@ def save_cell_for_prismatic(sample, name, path="", temperature='RT'):
     O_sites = np.where(total['Z'] == 8)[0]
     Zn_sites = np.where(total['Z'] == 30)[0]
     In_sites = np.where(total['Z'] == 49)[0]
+    Fe_sites = np.where(total['Z'] == 26)[0]
 
     O_rms = debye_waller('O', temperature)
     Zn_rms = debye_waller('Zn', temperature)
     In_rms = Zn_rms  # assume same as Zn
+    Fe_rms = Zn_rms
 
     total['dw'][O_sites] = round(O_rms, 3)
     total['dw'][Zn_sites] = round(Zn_rms, 3)
     total['dw'][In_sites] = round(In_rms, 3)
+    total['dw'][Fe_sites] = round(Fe_rms, 3)
 
     positions = " ".join(format(x, "0.6f") for x in sample.cell.diagonal())
 

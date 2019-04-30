@@ -12,6 +12,7 @@ from tqdm.auto import tqdm
 from time import time
 import gc
 
+
 def stack_and_save_old(
         simulation_folder='prism',
         add_atom_positions=False, save_hspy=True):
@@ -64,7 +65,8 @@ def stack_and_save(
         defocus_data = []
         for defocus in tqdm(defoci, desc="Reading defocus"):
             filename = filename_structure.format(depth, defocus)
-            filenames = get_first_N(get_sorted_filelist(filename, simulation_folder), 100)
+            filenames = get_first_N(get_sorted_filelist(
+                filename, simulation_folder), 100)
             defocus_data.append(read(filenames))
         data = np.asarray(defocus_data, dtype="float32")
         defocus_data = None
@@ -112,6 +114,49 @@ def stack_and_save(
         s.axes_manager[-1].units = 'Å'
 
         save3(s, corename + "_d{:02}".format(depth))
+        s = None
+        gc.collect()
+
+
+def save_kristian(simulation_folder='prism',
+                  add_atom_positions=False, save_hspy=True):
+
+    plt.close('all')
+
+    sim_folder = Path("{}/".format(simulation_folder))
+    sim_folder = get_files(sim_folder, ['.hspy', '.mrc'])
+    names = sorted(set([get_stem(f) for f in sim_folder]))
+    temperature = "RT" if "RT" in names[0] else "LN2"
+    for filename in names:
+        filenames = get_sorted_filelist(filename, simulation_folder)
+        data = np.asarray(read(filenames), dtype="float32")
+        s = hs.signals.Signal2D(data)
+        data = None
+        s = s.as_signal2D((0, -1))
+        gc.collect()
+
+        s.metadata.add_node('Simulation')
+        s.metadata.Simulation.Software = simulation_folder
+
+        s.axes_manager[0].name = 'Acceptance Angle'
+        s.axes_manager[0].units = 'mrad'
+        s.axes_manager[0].offset = 0
+        s.axes_manager[0].scale = 1
+
+        s.axes_manager[1].name = 'Frozen Phonon'
+        s.axes_manager[1].units = ''
+        s.axes_manager[1].offset = 0
+        s.axes_manager[1].scale = 1
+
+        s.axes_manager[-2].name = 'X-Axis'
+        s.axes_manager[-2].scale = 0.15
+        s.axes_manager[-2].units = 'Å'
+
+        s.axes_manager[-1].name = 'Y-Axis'
+        s.axes_manager[-1].scale = 0.15
+        s.axes_manager[-1].units = 'Å'
+
+        save3(s, filename + "_" + temperature)
         s = None
         gc.collect()
 
