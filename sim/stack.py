@@ -118,8 +118,7 @@ def stack_and_save(
         gc.collect()
 
 
-def save_kristian(simulation_folder='prism',
-                  add_atom_positions=False, save_hspy=True):
+def save_kristian(simulation_folder='prism', ):
 
     plt.close('all')
 
@@ -136,7 +135,6 @@ def save_kristian(simulation_folder='prism',
         gc.collect()
 
         s.metadata.add_node('Simulation')
-        s.metadata.Simulation.Software = simulation_folder
 
         s.axes_manager[0].name = 'Acceptance Angle'
         s.axes_manager[0].units = 'mrad'
@@ -165,18 +163,22 @@ def save3(s, name):
     tqdm.write("Saving {}".format(name))
     plt.close('all')
     Path('hyperspy/').mkdir(parents=True, exist_ok=True)
-    number_of_defoci = s.axes_manager['Defocus Series'].size
-    haadf_FP = HAADF(s).mean(1)  # sum over mrad, mean over defocus
-    haadf_FP.axes_manager['Frozen Phonon'].offset = number_of_defoci
-    haadf_FP.axes_manager['Frozen Phonon'].scale = number_of_defoci
-    haadf = haadf_FP.mean(0)
+    try:
+        number_of_defoci = s.axes_manager['Defocus Series'].size
+        haadf_FP = HAADF(s).mean(1)  # sum over mrad, mean over defocus
+        haadf_FP.axes_manager['Frozen Phonon'].offset = number_of_defoci
+        haadf_FP.axes_manager['Frozen Phonon'].scale = number_of_defoci
+        haadf = haadf_FP.mean(0)
+    except ValueError:
+        haadf_FP = HAADF(s)
+        haadf = haadf_FP.sum()
 
     fig, ax = plt.subplots(dpi=200)
     im = ax.imshow(haadf.data)
     colorbar(im)
     saveimg("hyperspy/" + name + "_HAADF.png", fig=fig)
 
-    I, IM, PM = integrate(haadf)
+    I, IM, PM = integrate(haadf, False, True)
     fig2, ax = plt.subplots(dpi=200)
     im2 = ax.imshow(IM.data)
     colorbar(im2)
@@ -189,7 +191,7 @@ def save3(s, name):
     if len(haadf_FP.axes_manager.navigation_axes):
         tqdm.write('\t' + 'Calculating error', end="")
         t = time()
-        I, IM, PM = integrate(haadf_FP)
+        I, IM, PM = integrate(haadf, False, True)
         error(I, name)
         tqdm.write('...ok, took {} seconds'.format(time() - t))
 
@@ -345,7 +347,7 @@ def get_files(path, extensions=['.hspy', '.mrc']):
     return all_files
 
 
-def get_stem(filepath):
+def get_stem(filepath, splitter='_FP'):
     f = Path(filepath)
     return f.stem.split('_FP')[0]
 
