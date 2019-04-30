@@ -218,9 +218,9 @@ def save2(
         colorbar(im2)
         saveimg("hyperspy/" + name + "_voronoi.png", fig=fig2)
 
-        if len(haadf_FP_series.axes_manager.navigation_axes):
-            I, IM, PM = integrate(haadf_FP_series, add_atom_positions)
-            error(I, name)
+        # if len(haadf_FP_series.axes_manager.navigation_axes):
+        #     I, IM, PM = integrate(haadf_FP_series, add_atom_positions)
+        #     error(I, name)
     if save_hspy:
         s.save("hyperspy/" + corename + ".hspy", overwrite=True)
 
