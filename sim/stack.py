@@ -169,14 +169,23 @@ def save3(s, name):
         haadf_FP.axes_manager['Frozen Phonon'].offset = number_of_defoci
         haadf_FP.axes_manager['Frozen Phonon'].scale = number_of_defoci
         haadf = haadf_FP.mean(0)
+
+        abf = ABF(s).mean()
     except ValueError:
         haadf_FP = HAADF(s)
         haadf = haadf_FP.sum()
+        abf = ABF(s).sum()
 
     fig, ax = plt.subplots(dpi=200)
     im = ax.imshow(haadf.data)
     colorbar(im)
     saveimg("hyperspy/" + name + "_HAADF.png", fig=fig)
+
+
+    fig, ax = plt.subplots(dpi=200)
+    im = ax.imshow(abf.data)
+    colorbar(im)
+    saveimg("hyperspy/" + name + "_ABF.png", fig=fig)
 
     I, IM, PM = integrate(haadf, False, True)
     fig2, ax = plt.subplots(dpi=200)
@@ -402,6 +411,8 @@ def HAADF(s, left=65., right=95.):
 def MAADF(s, left=35., right=45.):
     return s.inav[left:right].sum(0)
 
+def ABF(s, left=10., right=20.):
+    return s.inav[left:right].sum(0)
 
 def mean_FP_focus(s):
     return s.mean(axis=['Frozen Phonon', 'Defocus Series'])
