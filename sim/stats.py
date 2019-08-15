@@ -72,43 +72,12 @@ def weber_contrast_SI(defect, bulk):
     return contrast
 
 
-def michelson_contrast(s_defect, s_bulk):
-    defect = s_defect.data
-    bulk = s_bulk.data
-    MAX = defect.copy()
-    MIN = defect.copy()
-    defect_largest = defect >= bulk
-    bulk_largest = bulk >= defect
-
-    MAX[bulk_largest] = bulk[bulk_largest]
-    MIN[defect_largest] = bulk[defect_largest]
-
-    contrast = np.sum(((MAX - MIN) / (MIN + MAX)))
+def michelson_contrast(A, B):
+    contrast = np.sum((np.abs(A - B) / (A + B)))
     return contrast
 
 
 def michelson_contrast_SI(A, B):
-    from copy import copy
-    try:
-        A.compute()
-        B.compute()
-    except:
-        pass
-    LARGEST = copy(A)
-    SMALLEST = copy(A)
-
-    LARGEST.data = np.zeros(A.data.shape)
-    SMALLEST.data = np.zeros(A.data.shape)
-
-    A_largest = (A >= B).data
-    B_largest = (B >= A).data
-
-    LARGEST.data[A_largest] = copy(A.data[A_largest])
-    LARGEST.data[B_largest] = copy(B.data[B_largest])
-
-    SMALLEST.data[A_largest] = copy(B.data[A_largest])
-    SMALLEST.data[B_largest] = copy(A.data[B_largest])
-
-    contrast = ((LARGEST - SMALLEST) / (SMALLEST + LARGEST))
+    contrast = (np.abs(A - B) / (A + B))
     contrast.metadata.General.title = 'Michelson Contrast'
     return contrast
